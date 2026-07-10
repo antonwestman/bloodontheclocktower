@@ -44,6 +44,9 @@ export function PlayerCircle({
           key={player.id}
           player={player}
           role={roleById(player.roleId)}
+          secondaryRoleNames={player.secondaryRoleIds
+            .map((id) => roleById(id)?.name)
+            .filter((name): name is string => !!name)}
           lang={lang}
           angle={seatAngle(i, n)}
           radius={RADIUS}

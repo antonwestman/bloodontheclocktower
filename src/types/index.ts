@@ -10,6 +10,16 @@ export type LocalizedText = Record<Lang, string>;
 // it's in play — e.g. the Baron adds 2 Outsiders (at the cost of 2 Townsfolk).
 export type DistributionModifier = Partial<Record<Team, number>>;
 
+// A role that believes it's something else — e.g. the Drunk thinks it's a
+// specific Townsfolk, the Lunatic thinks it's a specific Demon and is shown
+// 2 fake Minions. `count` is how many pickers of `team` to show.
+export interface SecondaryRoleSlot {
+  id: string;
+  team: Team;
+  count: number;
+  label: LocalizedText;
+}
+
 export interface Role {
   id: string;
   name: string;
@@ -17,6 +27,7 @@ export interface Role {
   script: BuiltinScriptId;
   ability: LocalizedText;
   distributionModifier?: DistributionModifier;
+  secondaryRoleSlots?: SecondaryRoleSlot[];
 }
 
 // A role inside a custom scenario. Ability text is plain (not localized) —
@@ -52,6 +63,9 @@ export interface Player {
   isDead: boolean;
   isDrunk: boolean;
   reminders: string[];
+  // Flat list of secondary role picks (e.g. what a Drunk/Lunatic believes it
+  // is), positionally matching the assigned role's flattened secondaryRoleSlots.
+  secondaryRoleIds: (string | null)[];
 }
 
 export interface GameState {

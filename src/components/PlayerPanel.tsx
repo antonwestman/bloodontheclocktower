@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Lang, Player } from "../types";
 import type { DisplayRole } from "../data/scriptRoles";
-import { TEAM_ORDER } from "../data/roles";
+import { secondaryRoleSlotsFor, TEAM_ORDER } from "../data/roles";
 import { t, TEAM_LABEL } from "../i18n";
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
   onClose: () => void;
   onRename: (name: string) => void;
   onSetRole: (roleId: string | null) => void;
+  onSetSecondaryRole: (index: number, roleId: string | null) => void;
   onToggleDead: () => void;
   onToggleDrunk: () => void;
   onAddReminder: (text: string) => void;
@@ -25,6 +26,7 @@ export function PlayerPanel({
   onClose,
   onRename,
   onSetRole,
+  onSetSecondaryRole,
   onToggleDead,
   onToggleDrunk,
   onAddReminder,
@@ -40,6 +42,12 @@ export function PlayerPanel({
     onAddReminder(trimmed);
     setReminderInput("");
   };
+
+  let nextSecondaryIndex = 0;
+  const secondaryGroups = secondaryRoleSlotsFor(player.roleId).map((slot) => {
+    const indexes = Array.from({ length: slot.count }, () => nextSecondaryIndex++);
+    return { slot, indexes };
+  });
 
   return (
     <aside className="player-panel">
@@ -80,6 +88,34 @@ export function PlayerPanel({
 
       {player.roleId && (
         <p className="role-ability">{roles.find((r) => r.id === player.roleId)?.ability}</p>
+      )}
+
+      {secondaryGroups.length > 0 && (
+        <div className="secondary-roles">
+          {secondaryGroups.map(({ slot, indexes }) => (
+            <div key={slot.id} className="field">
+              <span>{slot.label[lang]}</span>
+              <div className="secondary-role-pickers">
+                {indexes.map((index) => (
+                  <select
+                    key={index}
+                    value={player.secondaryRoleIds[index] ?? ""}
+                    onChange={(e) => onSetSecondaryRole(index, e.target.value || null)}
+                  >
+                    <option value="">{t(lang, "noRole")}</option>
+                    {roles
+                      .filter((r) => r.team === slot.team)
+                      .map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                  </select>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       <div className="status-toggles">

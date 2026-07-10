@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useLocalStorageState } from "./useLocalStorageState";
 import type { BuiltinScriptId, CustomRole, GameState, Player, ScriptRef } from "../types";
+import { secondaryRoleSlotsFor } from "../data/roles";
 
 const GAME_KEY = "botc-game";
 
@@ -26,7 +27,12 @@ function migrateGameState(parsed: unknown): GameState | null {
     }
   }
 
-  return { script, players: raw.players as Player[], createdAt: raw.createdAt };
+  const players = (raw.players as Player[]).map((p) => ({
+    ...p,
+    secondaryRoleIds: p.secondaryRoleIds ?? [],
+  }));
+
+  return { script, players, createdAt: raw.createdAt };
 }
 
 function makeId(): string {
@@ -41,6 +47,7 @@ function makePlayer(name: string): Player {
     isDead: false,
     isDrunk: false,
     reminders: [],
+    secondaryRoleIds: [],
   };
 }
 
@@ -88,8 +95,29 @@ export function useGame() {
   );
 
   const setRole = useCallback(
-    (id: string, roleId: string | null) => updatePlayer(id, { roleId }),
+    (id: string, roleId: string | null) => {
+      const slotCount = secondaryRoleSlotsFor(roleId).reduce((sum, slot) => sum + slot.count, 0);
+      updatePlayer(id, { roleId, secondaryRoleIds: new Array(slotCount).fill(null) });
+    },
     [updatePlayer],
+  );
+
+  const setSecondaryRole = useCallback(
+    (id: string, index: number, roleId: string | null) => {
+      setGame((prev) =>
+        prev
+          ? {
+              ...prev,
+              players: mapPlayer(prev.players, id, (p) => {
+                const secondaryRoleIds = [...p.secondaryRoleIds];
+                secondaryRoleIds[index] = roleId;
+                return { ...p, secondaryRoleIds };
+              }),
+            }
+          : prev,
+      );
+    },
+    [setGame],
   );
 
   const toggleDead = useCallback(
@@ -170,6 +198,7 @@ export function useGame() {
     addPlayer,
     removePlayer,
     setRole,
+    setSecondaryRole,
     toggleDead,
     toggleDrunk,
     addReminder,

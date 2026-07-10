@@ -23,6 +23,7 @@ function App() {
     addPlayer,
     removePlayer,
     setRole,
+    setSecondaryRole,
     toggleDead,
     toggleDrunk,
     addReminder,
@@ -221,6 +222,7 @@ function App() {
               onClose={() => setSelectedId(null)}
               onRename={(name) => renamePlayer(selectedPlayer.id, name)}
               onSetRole={(roleId) => setRole(selectedPlayer.id, roleId)}
+              onSetSecondaryRole={(index, roleId) => setSecondaryRole(selectedPlayer.id, index, roleId)}
               onToggleDead={() => toggleDead(selectedPlayer.id)}
               onToggleDrunk={() => toggleDrunk(selectedPlayer.id)}
               onAddReminder={(text) => addReminder(selectedPlayer.id, text)}

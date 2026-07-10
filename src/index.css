@@ -727,6 +727,13 @@ textarea {
   line-height: 1.1;
 }
 
+.token-secondary-role {
+  font-size: 0.6rem;
+  font-style: italic;
+  color: var(--accent-strong);
+  line-height: 1.1;
+}
+
 .token-badge {
   position: absolute;
   top: -6px;
@@ -829,6 +836,21 @@ textarea {
   border-radius: 6px;
   padding: 0.6rem;
   margin: -0.25rem 0 0;
+}
+
+.secondary-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.secondary-role-pickers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .status-toggles {

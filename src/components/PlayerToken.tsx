@@ -5,6 +5,7 @@ import { t } from "../i18n";
 interface Props {
   player: Player;
   role: DisplayRole | undefined;
+  secondaryRoleNames: string[];
   lang: Lang;
   angle: number;
   radius: number;
@@ -19,6 +20,7 @@ interface Props {
 export function PlayerToken({
   player,
   role,
+  secondaryRoleNames,
   lang,
   angle,
   radius,
@@ -48,6 +50,9 @@ export function PlayerToken({
       <button type="button" className="token-avatar" onClick={onSelect}>
         <span className="token-name">{player.name}</span>
         {role && <span className="token-role">{role.name}</span>}
+        {secondaryRoleNames.length > 0 && (
+          <span className="token-secondary-role">{secondaryRoleNames.join(", ")}</span>
+        )}
         {player.isDead && <span className="token-badge dead-badge" title={t(lang, "dead")}>💀</span>}
         {player.isDrunk && <span className="token-badge drunk-badge" title={t(lang, "drunkStatus")}>🍺</span>}
       </button>
