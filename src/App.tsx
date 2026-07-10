@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGame } from "./hooks/useGame";
 import { useLang } from "./hooks/useLang";
 import { useCustomScripts } from "./hooks/useCustomScripts";
 import { SetupScreen } from "./components/SetupScreen";
 import { PlayerCircle } from "./components/PlayerCircle";
 import { PlayerPanel } from "./components/PlayerPanel";
+import { ImportScenarioModal } from "./components/ImportScenarioModal";
+import type { ImportStatus } from "./components/ImportScenarioModal";
 import { gameRoles, scriptDisplayName } from "./data/scriptRoles";
+import { clearSharedScenarioParam, decodeScenario, readSharedScenarioParam } from "./lib/shareScenario";
+import type { CustomRole } from "./types";
 import { t } from "./i18n";
 
 function App() {
@@ -31,6 +35,32 @@ function App() {
   const [newPlayerName, setNewPlayerName] = useState("");
   const [swapMode, setSwapMode] = useState(false);
   const [swapFirstId, setSwapFirstId] = useState<string | null>(null);
+  const [importScenario, setImportScenario] = useState<{
+    status: ImportStatus;
+    name?: string;
+    roles?: CustomRole[];
+  } | null>(null);
+
+  useEffect(() => {
+    const param = readSharedScenarioParam();
+    if (!param) return;
+    setImportScenario({ status: "loading" });
+    decodeScenario(param).then((result) => {
+      setImportScenario(result ? { status: "ready", name: result.name, roles: result.roles } : { status: "invalid" });
+    });
+  }, []);
+
+  const handleImportConfirm = () => {
+    if (importScenario?.status !== "ready" || !importScenario.name || !importScenario.roles) return;
+    saveScript(null, importScenario.name, importScenario.roles);
+    clearSharedScenarioParam();
+    setImportScenario(null);
+  };
+
+  const handleImportCancel = () => {
+    clearSharedScenarioParam();
+    setImportScenario(null);
+  };
 
   const selectedPlayer = game?.players.find((p) => p.id === selectedId) ?? null;
   const activeRoles = game ? gameRoles(game.script, lang) : [];
@@ -83,6 +113,16 @@ function App() {
 
   return (
     <div className="app">
+      {importScenario && (
+        <ImportScenarioModal
+          lang={lang}
+          status={importScenario.status}
+          name={importScenario.name}
+          roleCount={importScenario.roles?.length}
+          onConfirm={handleImportConfirm}
+          onCancel={handleImportCancel}
+        />
+      )}
       <header className="app-header">
         <h1>{t(lang, "appTitle")}</h1>
         <div className="header-controls">

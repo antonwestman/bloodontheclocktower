@@ -440,6 +440,37 @@ textarea {
   gap: 0.5rem;
 }
 
+/* Import scenario modal */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 100;
+}
+
+.modal-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-box h2 {
+  margin: 0;
+  color: var(--accent-strong);
+  font-size: 1.1rem;
+}
+
 /* Game layout */
 
 .game-layout {

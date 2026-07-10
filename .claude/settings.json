@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pkill -f \"vite.*5185\")"
+      "Bash(pkill -f \"vite.*5185\")",
+      "Bash(node drive-migrate.mjs)",
+      "Bash(pkill -f \"vite.*5186\")",
+      "Bash(pkill -f \"vite.*5187\")"
     ]
   }
 }

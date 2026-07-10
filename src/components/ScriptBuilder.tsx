@@ -3,6 +3,7 @@ import type { BuiltinScriptId, CustomRole, CustomScript, Lang } from "../types";
 import { rolesForScript, SCRIPTS, TEAM_ORDER } from "../data/roles";
 import { t, TEAM_LABEL } from "../i18n";
 import { CharacterPicker } from "./CharacterPicker";
+import { buildShareUrl, encodeScenario, isShareSupported } from "../lib/shareScenario";
 
 interface Props {
   lang: Lang;
@@ -21,6 +22,8 @@ export function ScriptBuilder({ lang, customScripts, onSaveScript, onDeleteScrip
   const [roles, setRoles] = useState<CustomRole[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [picker, setPicker] = useState<PickerMode>(null);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [shareCopyFailed, setShareCopyFailed] = useState(false);
 
   useEffect(() => {
     onDraftChange({ name, roles });
@@ -70,6 +73,18 @@ export function ScriptBuilder({ lang, customScripts, onSaveScript, onDeleteScrip
     onDeleteScript(script.id);
     if (editingId === script.id) {
       startFromEmpty();
+    }
+  };
+
+  const handleShare = async () => {
+    const encoded = await encodeScenario({ name: name.trim() || t(lang, "customScenario"), roles });
+    const url = buildShareUrl(encoded);
+    setShareUrl(url);
+    setShareCopyFailed(false);
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      setShareCopyFailed(true);
     }
   };
 
@@ -173,6 +188,28 @@ export function ScriptBuilder({ lang, customScripts, onSaveScript, onDeleteScrip
           </button>
         </div>
         {editingId && <p className="hint">{t(lang, "savedAs")}: {name}</p>}
+      </div>
+
+      <div className="field">
+        <span>{t(lang, "shareScenario")}</span>
+        <div>
+          <button
+            type="button"
+            className="secondary-button"
+            disabled={roles.length === 0 || !isShareSupported()}
+            onClick={handleShare}
+          >
+            {t(lang, "shareScenario")}
+          </button>
+        </div>
+        {!isShareSupported() && <p className="hint">{t(lang, "shareUnsupported")}</p>}
+        {isShareSupported() && roles.length === 0 && <p className="hint">{t(lang, "shareNeedsRoles")}</p>}
+        {shareUrl && (
+          <>
+            <input type="text" readOnly value={shareUrl} onFocus={(e) => e.currentTarget.select()} />
+            <p className="hint">{t(lang, shareCopyFailed ? "shareLinkCopyFailed" : "shareLinkCopied")}</p>
+          </>
+        )}
       </div>
     </div>
   );

@@ -65,6 +65,17 @@ const sv: Dict = {
   deleteScenario: "Ta bort",
   deleteScenarioConfirm: "Ta bort det sparade scenariot? Detta går inte att ångra.",
   noCatalogRoles: "Alla karaktärer är redan tillagda.",
+  shareScenario: "Dela scenario",
+  shareUnsupported: "Din webbläsare stödjer inte delning via länk.",
+  shareNeedsRoles: "Lägg till minst en karaktär för att kunna dela.",
+  shareLinkLabel: "Dela-länk",
+  shareLinkCopied: "Länken är kopierad till urklipp!",
+  shareLinkCopyFailed: "Kunde inte kopiera automatiskt – markera och kopiera länken manuellt.",
+  importScenarioTitle: "Importera delat scenario?",
+  importScenarioLoading: "Läser in scenario...",
+  importScenarioInvalid: "Länken kunde inte läsas som ett giltigt scenario.",
+  importScenarioCharacters: "karaktärer",
+  importButton: "Importera",
 };
 
 const en: Dict = {
@@ -130,6 +141,17 @@ const en: Dict = {
   deleteScenario: "Delete",
   deleteScenarioConfirm: "Delete this saved scenario? This cannot be undone.",
   noCatalogRoles: "All characters have already been added.",
+  shareScenario: "Share scenario",
+  shareUnsupported: "Your browser doesn't support sharing via link.",
+  shareNeedsRoles: "Add at least one character to share.",
+  shareLinkLabel: "Share link",
+  shareLinkCopied: "Link copied to clipboard!",
+  shareLinkCopyFailed: "Couldn't copy automatically – select and copy the link manually.",
+  importScenarioTitle: "Import shared scenario?",
+  importScenarioLoading: "Reading scenario...",
+  importScenarioInvalid: "This link couldn't be read as a valid scenario.",
+  importScenarioCharacters: "characters",
+  importButton: "Import",
 };
 
 const dictionaries: Record<Lang, Dict> = { sv, en };
