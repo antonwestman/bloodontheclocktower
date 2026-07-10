@@ -104,6 +104,40 @@ export function useGame() {
     [updatePlayer],
   );
 
+  const swapSeats = useCallback(
+    (idA: string, idB: string) => {
+      setGame((prev) => {
+        if (!prev) return prev;
+        const indexA = prev.players.findIndex((p) => p.id === idA);
+        const indexB = prev.players.findIndex((p) => p.id === idB);
+        if (indexA === -1 || indexB === -1 || indexA === indexB) return prev;
+        const players = [...prev.players];
+        [players[indexA], players[indexB]] = [players[indexB], players[indexA]];
+        return { ...prev, players };
+      });
+    },
+    [setGame],
+  );
+
+  // Moves a single player into the gap that sits right after `afterIndex`
+  // (the original array index, before removal) — everyone else keeps their
+  // relative order, unlike swapSeats which exchanges two players.
+  const movePlayerToGap = useCallback(
+    (id: string, afterIndex: number) => {
+      setGame((prev) => {
+        if (!prev) return prev;
+        const fromIndex = prev.players.findIndex((p) => p.id === id);
+        if (fromIndex === -1) return prev;
+        const players = [...prev.players];
+        const [moved] = players.splice(fromIndex, 1);
+        const insertIndex = fromIndex <= afterIndex ? afterIndex : afterIndex + 1;
+        players.splice(insertIndex, 0, moved);
+        return { ...prev, players };
+      });
+    },
+    [setGame],
+  );
+
   return {
     game,
     startGame,
@@ -116,6 +150,8 @@ export function useGame() {
     addReminder,
     removeReminder,
     renamePlayer,
+    swapSeats,
+    movePlayerToGap,
   };
 }
 

@@ -34,6 +34,11 @@ const sv: Dict = {
   rename: "Byt namn",
   seatCount: "spelare",
   emptyReminders: "Inga tokens",
+  swapSeats: "Byt plats",
+  swapCancel: "Avbryt bytet",
+  swapHintPickFirst: "Välj den första spelaren du vill byta plats på.",
+  swapHintPickSecond: "Välj vem den ska byta plats med, eller en tom plats mellan två spelare.",
+  moveHere: "Flytta hit",
 };
 
 const en: Dict = {
@@ -68,6 +73,11 @@ const en: Dict = {
   rename: "Rename",
   seatCount: "players",
   emptyReminders: "No tokens",
+  swapSeats: "Swap seats",
+  swapCancel: "Cancel swap",
+  swapHintPickFirst: "Choose the first player you want to swap.",
+  swapHintPickSecond: "Choose who they should swap places with, or an empty spot between two players.",
+  moveHere: "Move here",
 };
 
 const dictionaries: Record<Lang, Dict> = { sv, en };

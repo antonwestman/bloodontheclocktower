@@ -8,20 +8,42 @@ interface Props {
   angle: number;
   radius: number;
   isSelected: boolean;
+  swapMode: boolean;
+  isSwapChosen: boolean;
   onSelect: () => void;
   onToggleDead: () => void;
   onToggleDrunk: () => void;
 }
 
-export function PlayerToken({ player, role, lang, angle, radius, isSelected, onSelect, onToggleDead, onToggleDrunk }: Props) {
+export function PlayerToken({
+  player,
+  role,
+  lang,
+  angle,
+  radius,
+  isSelected,
+  swapMode,
+  isSwapChosen,
+  onSelect,
+  onToggleDead,
+  onToggleDrunk,
+}: Props) {
   const x = 50 + radius * Math.cos(angle);
   const y = 50 + radius * Math.sin(angle);
 
+  const classes = [
+    "player-token",
+    `team-${role?.team ?? "none"}`,
+    player.isDead ? "is-dead" : "",
+    isSelected ? "is-selected" : "",
+    swapMode ? "swap-candidate" : "",
+    isSwapChosen ? "swap-chosen" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div
-      className={`player-token team-${role?.team ?? "none"} ${player.isDead ? "is-dead" : ""} ${isSelected ? "is-selected" : ""}`}
-      style={{ left: `${x}%`, top: `${y}%` }}
-    >
+    <div className={classes} style={{ left: `${x}%`, top: `${y}%` }}>
       <button type="button" className="token-avatar" onClick={onSelect}>
         <span className="token-name">{player.name}</span>
         {role && <span className="token-role">{role.name}</span>}
@@ -34,6 +56,7 @@ export function PlayerToken({ player, role, lang, angle, radius, isSelected, onS
           type="button"
           className={`toggle-chip ${player.isDead ? "active" : ""}`}
           onClick={onToggleDead}
+          disabled={swapMode}
           title={t(lang, "dead")}
         >
           💀
@@ -42,6 +65,7 @@ export function PlayerToken({ player, role, lang, angle, radius, isSelected, onS
           type="button"
           className={`toggle-chip ${player.isDrunk ? "active" : ""}`}
           onClick={onToggleDrunk}
+          disabled={swapMode}
           title={t(lang, "drunkStatus")}
         >
           🍺

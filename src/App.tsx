@@ -21,10 +21,14 @@ function App() {
     addReminder,
     removeReminder,
     renamePlayer,
+    swapSeats,
+    movePlayerToGap,
   } = useGame();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newPlayerName, setNewPlayerName] = useState("");
+  const [swapMode, setSwapMode] = useState(false);
+  const [swapFirstId, setSwapFirstId] = useState<string | null>(null);
 
   const selectedPlayer = game?.players.find((p) => p.id === selectedId) ?? null;
 
@@ -32,8 +36,46 @@ function App() {
     if (window.confirm(t(lang, "resetConfirm"))) {
       endGame();
       setSelectedId(null);
+      setSwapMode(false);
+      setSwapFirstId(null);
     }
   };
+
+  const toggleSwapMode = () => {
+    setSwapMode((prev) => !prev);
+    setSwapFirstId(null);
+    setSelectedId(null);
+  };
+
+  const handleTokenClick = (id: string) => {
+    if (!swapMode) {
+      setSelectedId(id);
+      return;
+    }
+    if (!swapFirstId) {
+      setSwapFirstId(id);
+      return;
+    }
+    if (swapFirstId === id) {
+      setSwapFirstId(null);
+      return;
+    }
+    swapSeats(swapFirstId, id);
+    setSwapMode(false);
+    setSwapFirstId(null);
+  };
+
+  const handleGapClick = (afterIndex: number) => {
+    if (!swapFirstId) return;
+    movePlayerToGap(swapFirstId, afterIndex);
+    setSwapMode(false);
+    setSwapFirstId(null);
+  };
+
+  let circleHint = t(lang, "clickPlayerHint");
+  if (swapMode) {
+    circleHint = t(lang, swapFirstId ? "swapHintPickSecond" : "swapHintPickFirst");
+  }
 
   return (
     <div className="app">
@@ -49,6 +91,15 @@ function App() {
               EN
             </button>
           </fieldset>
+          {game && (
+            <button
+              type="button"
+              className={`secondary-button ${swapMode ? "active" : ""}`}
+              onClick={toggleSwapMode}
+            >
+              {t(lang, swapMode ? "swapCancel" : "swapSeats")}
+            </button>
+          )}
           {game && (
             <button type="button" className="secondary-button" onClick={handleReset}>
               {t(lang, "resetGame")}
@@ -92,12 +143,15 @@ function App() {
                   players={game.players}
                   lang={lang}
                   selectedId={selectedId}
+                  swapMode={swapMode}
+                  swapFirstId={swapFirstId}
                   roleById={roleById}
-                  onSelect={setSelectedId}
+                  onSelect={handleTokenClick}
                   onToggleDead={toggleDead}
                   onToggleDrunk={toggleDrunk}
+                  onGapSelect={handleGapClick}
                 />
-                <p className="hint centered">{t(lang, "clickPlayerHint")}</p>
+                <p className="hint centered">{circleHint}</p>
               </>
             )}
           </div>
