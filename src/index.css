@@ -250,11 +250,24 @@ textarea {
 .player-list li {
   display: flex;
   align-items: center;
+  gap: 0.6rem;
   justify-content: space-between;
   background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 0.4rem 0.7rem;
+}
+
+.player-list li input[type="text"] {
+  flex: 1;
+}
+
+.player-slot-index {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  width: 1.5rem;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .hint {
@@ -313,6 +326,13 @@ textarea {
 
 .start-from-choices button:hover {
   border-color: var(--accent);
+}
+
+.start-from-choices button.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #1a1310;
+  font-weight: 700;
 }
 
 .roster-list {
@@ -500,6 +520,75 @@ textarea {
   color: var(--accent-strong);
   font-weight: 700;
   letter-spacing: 0.03em;
+}
+
+/* Role distribution status */
+
+.distribution-status {
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-panel);
+}
+
+.distribution-rows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.distribution-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  font-size: 0.85rem;
+}
+
+.distribution-team {
+  color: var(--text-dim);
+}
+
+.distribution-count {
+  font-weight: 700;
+}
+
+.distribution-icon {
+  font-size: 0.8rem;
+}
+
+.distribution-row.state-ok {
+  border-color: var(--team-outsider);
+}
+
+.distribution-row.state-ok .distribution-icon {
+  color: var(--team-outsider);
+}
+
+.distribution-row.state-under .distribution-icon {
+  color: var(--accent-strong);
+}
+
+.distribution-row.state-over {
+  border-color: var(--danger);
+}
+
+.distribution-row.state-over .distribution-icon {
+  color: var(--danger);
+}
+
+.distribution-summary {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.distribution-summary.satisfied {
+  color: var(--team-outsider);
 }
 
 /* Circle */

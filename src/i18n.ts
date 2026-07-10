@@ -76,6 +76,11 @@ const sv: Dict = {
   importScenarioInvalid: "Länken kunde inte läsas som ett giltigt scenario.",
   importScenarioCharacters: "karaktärer",
   importButton: "Importera",
+  numberOfPlayers: "Antal spelare",
+  playerSlotPlaceholder: "Namn",
+  distributionTitle: "Rollfördelning",
+  distributionSatisfied: "Rollfördelningen är uppfylld.",
+  distributionUnsatisfied: "Rollfördelningen är inte uppfylld än.",
 };
 
 const en: Dict = {
@@ -152,6 +157,11 @@ const en: Dict = {
   importScenarioInvalid: "This link couldn't be read as a valid scenario.",
   importScenarioCharacters: "characters",
   importButton: "Import",
+  numberOfPlayers: "Number of players",
+  playerSlotPlaceholder: "Name",
+  distributionTitle: "Role distribution",
+  distributionSatisfied: "Role distribution is satisfied.",
+  distributionUnsatisfied: "Role distribution isn't satisfied yet.",
 };
 
 const dictionaries: Record<Lang, Dict> = { sv, en };

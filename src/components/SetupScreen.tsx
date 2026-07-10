@@ -16,32 +16,38 @@ type ScriptChoice = BuiltinScriptId | "custom";
 
 const BUILTIN_IDS = Object.keys(SCRIPTS) as BuiltinScriptId[];
 const MIN_PLAYERS = 5;
+const MAX_PLAYERS = 15;
+const PLAYER_COUNTS = Array.from({ length: MAX_PLAYERS - MIN_PLAYERS + 1 }, (_, i) => MIN_PLAYERS + i);
 
 export function SetupScreen({ lang, customScripts, onSaveScript, onDeleteScript, onStart }: Props) {
   const [choice, setChoice] = useState<ScriptChoice>("tb");
   const [customDraft, setCustomDraft] = useState<{ name: string; roles: CustomRole[] }>({ name: "", roles: [] });
-  const [names, setNames] = useState<string[]>([]);
-  const [nameInput, setNameInput] = useState("");
+  const [names, setNames] = useState<string[]>(new Array(MIN_PLAYERS).fill(""));
 
-  const addName = () => {
-    const trimmed = nameInput.trim();
-    if (!trimmed) return;
-    setNames((prev) => [...prev, trimmed]);
-    setNameInput("");
+  const setPlayerCount = (count: number) => {
+    setNames((prev) => {
+      const next = prev.slice(0, count);
+      while (next.length < count) next.push("");
+      return next;
+    });
   };
 
-  const removeName = (index: number) => {
-    setNames((prev) => prev.slice(0, index).concat(prev.slice(index + 1)));
+  const updateName = (index: number, value: string) => {
+    setNames((prev) => prev.map((n, i) => (i === index ? value : n)));
   };
 
-  const canStart = names.length >= MIN_PLAYERS;
+  const removeSlot = (index: number) => {
+    setNames((prev) => (prev.length > MIN_PLAYERS ? prev.filter((_, i) => i !== index) : prev));
+  };
+
+  const canStart = names.every((n) => n.trim().length > 0);
 
   const handleStart = () => {
     const script: ScriptRef =
       choice === "custom"
         ? { kind: "custom", id: crypto.randomUUID(), name: customDraft.name || t(lang, "customScenario"), roles: customDraft.roles }
         : { kind: "builtin", id: choice };
-    onStart(script, names);
+    onStart(script, names.map((n) => n.trim()));
   };
 
   return (
@@ -81,32 +87,39 @@ export function SetupScreen({ lang, customScripts, onSaveScript, onDeleteScript,
       </section>
 
       <section className="setup-section">
-        <h2>{t(lang, "players")}</h2>
-        <form
-          className="add-player-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            addName();
-          }}
-        >
-          <input
-            type="text"
-            value={nameInput}
-            onChange={(e) => setNameInput(e.target.value)}
-            placeholder={t(lang, "playerNamePlaceholder")}
-            autoFocus
-          />
-          <button type="submit">{t(lang, "add")}</button>
-        </form>
+        <h2>{t(lang, "numberOfPlayers")}</h2>
+        <div className="start-from-choices">
+          {PLAYER_COUNTS.map((count) => (
+            <button
+              type="button"
+              key={count}
+              className={names.length === count ? "selected" : ""}
+              onClick={() => setPlayerCount(count)}
+            >
+              {count}
+            </button>
+          ))}
+        </div>
+      </section>
 
+      <section className="setup-section">
+        <h2>{t(lang, "players")}</h2>
         <ul className="player-list">
           {names.map((name, i) => (
-            <li key={`${name}-${i}`}>
-              <span>{name}</span>
+            <li key={i}>
+              <span className="player-slot-index">{i + 1}</span>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => updateName(i, e.target.value)}
+                placeholder={`${t(lang, "playerSlotPlaceholder")} ${i + 1}`}
+                autoFocus={i === 0}
+              />
               <button
                 type="button"
                 className="icon-button"
-                onClick={() => removeName(i)}
+                onClick={() => removeSlot(i)}
+                disabled={names.length <= MIN_PLAYERS}
                 aria-label={t(lang, "removePlayer")}
               >
                 ×

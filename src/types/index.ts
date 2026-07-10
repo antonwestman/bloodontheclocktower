@@ -6,12 +6,17 @@ export type Lang = "sv" | "en";
 
 export type LocalizedText = Record<Lang, string>;
 
+// How a role shifts the standard townsfolk/outsider/minion/demon split when
+// it's in play — e.g. the Baron adds 2 Outsiders (at the cost of 2 Townsfolk).
+export type DistributionModifier = Partial<Record<Team, number>>;
+
 export interface Role {
   id: string;
   name: string;
   team: Team;
   script: BuiltinScriptId;
   ability: LocalizedText;
+  distributionModifier?: DistributionModifier;
 }
 
 // A role inside a custom scenario. Ability text is plain (not localized) —

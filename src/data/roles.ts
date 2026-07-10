@@ -101,7 +101,7 @@ export const ROLES: Role[] = [
   { id: "baron", name: "Baron", team: "minion", script: "tb", ability: {
     sv: "Extra Outsiders läggs till i spelet vid start.",
     en: "There are extra Outsiders in play.",
-  }},
+  }, distributionModifier: { outsider: 2, townsfolk: -2 }},
   { id: "imp", name: "Imp", team: "demon", script: "tb", ability: {
     sv: "Varje natt (utom den första) dödar du en spelare. Dödar du dig själv blir en Minion den nya Imp.",
     en: "Each night (except the first), choose a player: they die. If you kill yourself, a Minion becomes the Imp.",
@@ -323,6 +323,13 @@ export function rolesForScript(script: BuiltinScriptId): Role[] {
 export function roleById(id: string | null): Role | undefined {
   if (!id) return undefined;
   return ROLES.find((r) => r.id === id);
+}
+
+// Custom scenarios preserve an official role's id when it's added from the
+// catalog, so this lookup works for both builtin games and custom ones —
+// purely user-invented roles simply won't match anything here.
+export function distributionModifierFor(roleId: string) {
+  return roleById(roleId)?.distributionModifier;
 }
 
 export const TEAM_ORDER: Role["team"][] = ["townsfolk", "outsider", "minion", "demon"];

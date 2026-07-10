@@ -7,7 +7,9 @@ import { PlayerCircle } from "./components/PlayerCircle";
 import { PlayerPanel } from "./components/PlayerPanel";
 import { ImportScenarioModal } from "./components/ImportScenarioModal";
 import type { ImportStatus } from "./components/ImportScenarioModal";
+import { RoleDistributionStatus } from "./components/RoleDistributionStatus";
 import { gameRoles, scriptDisplayName } from "./data/scriptRoles";
+import { assignedDistribution, requiredDistribution } from "./data/distribution";
 import { clearSharedScenarioParam, decodeScenario, readSharedScenarioParam } from "./lib/shareScenario";
 import type { CustomRole } from "./types";
 import { t } from "./i18n";
@@ -65,6 +67,9 @@ function App() {
   const selectedPlayer = game?.players.find((p) => p.id === selectedId) ?? null;
   const activeRoles = game ? gameRoles(game.script, lang) : [];
   const roleById = (roleId: string | null) => activeRoles.find((r) => r.id === roleId);
+  const assignedRoleIds = game ? game.players.map((p) => p.roleId).filter((id): id is string => id !== null) : [];
+  const required = game ? requiredDistribution(game.players.length, assignedRoleIds) : null;
+  const assigned = game ? assignedDistribution(game.players, roleById) : null;
 
   const handleReset = () => {
     if (window.confirm(t(lang, "resetConfirm"))) {
@@ -184,6 +189,8 @@ function App() {
                 <button type="submit">{t(lang, "addPlayer")}</button>
               </form>
             </div>
+
+            {required && assigned && <RoleDistributionStatus lang={lang} required={required} assigned={assigned} />}
 
             {game.players.length === 0 ? (
               <p className="hint">{t(lang, "needAtLeastPlayers")}</p>
