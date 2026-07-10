@@ -1,5 +1,6 @@
 import type { Lang, Player } from "../types";
 import type { DisplayRole } from "../data/scriptRoles";
+import { resolveSecondaryNames } from "../data/scriptRoles";
 import { PlayerToken } from "./PlayerToken";
 import { GapMarker } from "./GapMarker";
 
@@ -44,9 +45,7 @@ export function PlayerCircle({
           key={player.id}
           player={player}
           role={roleById(player.roleId)}
-          secondaryRoleNames={player.secondaryRoleIds
-            .map((id) => roleById(id)?.name)
-            .filter((name): name is string => !!name)}
+          secondaryRoleNames={resolveSecondaryNames(player, players, roleById)}
           lang={lang}
           angle={seatAngle(i, n)}
           radius={RADIUS}

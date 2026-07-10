@@ -27,10 +27,10 @@ function migrateGameState(parsed: unknown): GameState | null {
     }
   }
 
-  const players = (raw.players as Player[]).map((p) => ({
-    ...p,
-    secondaryRoleIds: p.secondaryRoleIds ?? [],
-  }));
+  const players = (raw.players as Player[]).map((p) => {
+    const legacy = p as Player & { secondaryRoleIds?: (string | null)[] };
+    return { ...p, secondaryIds: legacy.secondaryIds ?? legacy.secondaryRoleIds ?? [] };
+  });
 
   return { script, players, createdAt: raw.createdAt };
 }
@@ -47,7 +47,7 @@ function makePlayer(name: string): Player {
     isDead: false,
     isDrunk: false,
     reminders: [],
-    secondaryRoleIds: [],
+    secondaryIds: [],
   };
 }
 
@@ -97,21 +97,21 @@ export function useGame() {
   const setRole = useCallback(
     (id: string, roleId: string | null) => {
       const slotCount = secondaryRoleSlotsFor(roleId).reduce((sum, slot) => sum + slot.count, 0);
-      updatePlayer(id, { roleId, secondaryRoleIds: new Array(slotCount).fill(null) });
+      updatePlayer(id, { roleId, secondaryIds: new Array(slotCount).fill(null) });
     },
     [updatePlayer],
   );
 
   const setSecondaryRole = useCallback(
-    (id: string, index: number, roleId: string | null) => {
+    (id: string, index: number, value: string | null) => {
       setGame((prev) =>
         prev
           ? {
               ...prev,
               players: mapPlayer(prev.players, id, (p) => {
-                const secondaryRoleIds = [...p.secondaryRoleIds];
-                secondaryRoleIds[index] = roleId;
-                return { ...p, secondaryRoleIds };
+                const secondaryIds = [...p.secondaryIds];
+                secondaryIds[index] = value;
+                return { ...p, secondaryIds };
               }),
             }
           : prev,

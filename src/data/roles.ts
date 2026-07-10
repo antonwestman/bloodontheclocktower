@@ -78,7 +78,7 @@ export const ROLES: Role[] = [
     sv: "Du tror att du är en Townsfolk-roll, men din förmåga fungerar inte och du får inga sanningsenliga svar.",
     en: "You do not know you are the Drunk. You think you are a Townsfolk, but your ability malfunctions.",
   }, secondaryRoleSlots: [
-    { id: "belief", team: "townsfolk", count: 1, label: { sv: "Tror att den är", en: "Believes they are" } },
+    { id: "belief", kind: "role", team: "townsfolk", count: 1, label: { sv: "Tror att den är", en: "Believes they are" } },
   ]},
   { id: "recluse", name: "Recluse", team: "outsider", script: "tb", ability: {
     sv: "Du kan visas som ond, och som Minion eller Demon, även om du är död.",
@@ -180,8 +180,8 @@ export const ROLES: Role[] = [
     sv: "Du tror att du är Demonen och agerar som en, men har ingen verklig kraft. Den riktiga Demonen vet vem du är.",
     en: "You think you are a Demon and act like one each night, but have no real power. The Demon knows who you are.",
   }, secondaryRoleSlots: [
-    { id: "belief", team: "demon", count: 1, label: { sv: "Tror att den är", en: "Believes they are" } },
-    { id: "bluffs", team: "minion", count: 2, label: { sv: "Fejkade minions", en: "Fake minions" } },
+    { id: "belief", kind: "role", team: "demon", count: 1, label: { sv: "Tror att den är", en: "Believes they are" } },
+    { id: "bluffs", kind: "player", count: 2, label: { sv: "Fejkade minions (spelare)", en: "Fake minions (players)" } },
   ]},
   { id: "godfather", name: "Godfather", team: "minion", script: "bmr", ability: {
     sv: "Du får veta vilka Outsiders som är med i spelet. Om en Outsider dör väljer du en spelare som dör i natt.",

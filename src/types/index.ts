@@ -10,12 +10,14 @@ export type LocalizedText = Record<Lang, string>;
 // it's in play — e.g. the Baron adds 2 Outsiders (at the cost of 2 Townsfolk).
 export type DistributionModifier = Partial<Record<Team, number>>;
 
-// A role that believes it's something else — e.g. the Drunk thinks it's a
-// specific Townsfolk, the Lunatic thinks it's a specific Demon and is shown
-// 2 fake Minions. `count` is how many pickers of `team` to show.
+// A role that believes it's something else, or is told fake information
+// about other players — e.g. the Drunk thinks it's a specific Townsfolk
+// (kind: "role"), while the Lunatic is shown 2 players it's told are the
+// Minions (kind: "player"). `count` is how many pickers to show.
 export interface SecondaryRoleSlot {
   id: string;
-  team: Team;
+  kind: "role" | "player";
+  team?: Team; // required when kind is "role"
   count: number;
   label: LocalizedText;
 }
@@ -63,9 +65,10 @@ export interface Player {
   isDead: boolean;
   isDrunk: boolean;
   reminders: string[];
-  // Flat list of secondary role picks (e.g. what a Drunk/Lunatic believes it
-  // is), positionally matching the assigned role's flattened secondaryRoleSlots.
-  secondaryRoleIds: (string | null)[];
+  // Flat list of secondary picks (role ids or player ids, depending on the
+  // slot's kind), positionally matching the assigned role's flattened
+  // secondaryRoleSlots.
+  secondaryIds: (string | null)[];
 }
 
 export interface GameState {

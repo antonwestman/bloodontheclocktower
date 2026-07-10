@@ -6,12 +6,13 @@ import { t, TEAM_LABEL } from "../i18n";
 
 interface Props {
   player: Player;
+  players: Player[];
   roles: DisplayRole[];
   lang: Lang;
   onClose: () => void;
   onRename: (name: string) => void;
   onSetRole: (roleId: string | null) => void;
-  onSetSecondaryRole: (index: number, roleId: string | null) => void;
+  onSetSecondaryRole: (index: number, value: string | null) => void;
   onToggleDead: () => void;
   onToggleDrunk: () => void;
   onAddReminder: (text: string) => void;
@@ -21,6 +22,7 @@ interface Props {
 
 export function PlayerPanel({
   player,
+  players,
   roles,
   lang,
   onClose,
@@ -92,29 +94,33 @@ export function PlayerPanel({
 
       {secondaryGroups.length > 0 && (
         <div className="secondary-roles">
-          {secondaryGroups.map(({ slot, indexes }) => (
-            <div key={slot.id} className="field">
-              <span>{slot.label[lang]}</span>
-              <div className="secondary-role-pickers">
-                {indexes.map((index) => (
-                  <select
-                    key={index}
-                    value={player.secondaryRoleIds[index] ?? ""}
-                    onChange={(e) => onSetSecondaryRole(index, e.target.value || null)}
-                  >
-                    <option value="">{t(lang, "noRole")}</option>
-                    {roles
-                      .filter((r) => r.team === slot.team)
-                      .map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.name}
+          {secondaryGroups.map(({ slot, indexes }) => {
+            const options =
+              slot.kind === "player"
+                ? players.filter((p) => p.id !== player.id).map((p) => ({ id: p.id, name: p.name }))
+                : roles.filter((r) => r.team === slot.team);
+            return (
+              <div key={slot.id} className="field">
+                <span>{slot.label[lang]}</span>
+                <div className="secondary-role-pickers">
+                  {indexes.map((index) => (
+                    <select
+                      key={index}
+                      value={player.secondaryIds[index] ?? ""}
+                      onChange={(e) => onSetSecondaryRole(index, e.target.value || null)}
+                    >
+                      <option value="">{t(lang, "noRole")}</option>
+                      {options.map((o) => (
+                        <option key={o.id} value={o.id}>
+                          {o.name}
                         </option>
                       ))}
-                  </select>
-                ))}
+                    </select>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

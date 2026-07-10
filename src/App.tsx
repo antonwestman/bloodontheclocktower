@@ -217,6 +217,7 @@ function App() {
           {selectedPlayer && (
             <PlayerPanel
               player={selectedPlayer}
+              players={game.players}
               roles={activeRoles}
               lang={lang}
               onClose={() => setSelectedId(null)}
