@@ -1,4 +1,4 @@
-import type { Role, ScriptId } from "../types";
+import type { BuiltinScriptId, Role } from "../types";
 
 // Förmågetexterna nedan är korta, egna sammanfattningar av de officiella
 // rollerna i Blood on the Clocktower – inte ordagrant citerade från spelet.
@@ -8,7 +8,7 @@ import type { Role, ScriptId } from "../types";
 // Blood on the Clocktower roles — not verbatim quotes from the game.
 // Double-check exact wording against official script sheets if needed.
 
-export const SCRIPTS: Record<ScriptId, string> = {
+export const SCRIPTS: Record<BuiltinScriptId, string> = {
   tb: "Trouble Brewing",
   bmr: "Bad Moon Rising",
   sv: "Sects & Violets",
@@ -316,7 +316,7 @@ export const ROLES: Role[] = [
   }},
 ];
 
-export function rolesForScript(script: ScriptId): Role[] {
+export function rolesForScript(script: BuiltinScriptId): Role[] {
   return ROLES.filter((r) => r.script === script);
 }
 

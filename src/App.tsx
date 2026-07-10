@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useGame } from "./hooks/useGame";
 import { useLang } from "./hooks/useLang";
+import { useCustomScripts } from "./hooks/useCustomScripts";
 import { SetupScreen } from "./components/SetupScreen";
 import { PlayerCircle } from "./components/PlayerCircle";
 import { PlayerPanel } from "./components/PlayerPanel";
-import { SCRIPTS, roleById } from "./data/roles";
+import { gameRoles, scriptDisplayName } from "./data/scriptRoles";
 import { t } from "./i18n";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
     swapSeats,
     movePlayerToGap,
   } = useGame();
+  const { customScripts, saveScript, deleteScript } = useCustomScripts();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newPlayerName, setNewPlayerName] = useState("");
@@ -31,6 +33,8 @@ function App() {
   const [swapFirstId, setSwapFirstId] = useState<string | null>(null);
 
   const selectedPlayer = game?.players.find((p) => p.id === selectedId) ?? null;
+  const activeRoles = game ? gameRoles(game.script, lang) : [];
+  const roleById = (roleId: string | null) => activeRoles.find((r) => r.id === roleId);
 
   const handleReset = () => {
     if (window.confirm(t(lang, "resetConfirm"))) {
@@ -109,12 +113,18 @@ function App() {
       </header>
 
       {!game ? (
-        <SetupScreen lang={lang} onStart={startGame} />
+        <SetupScreen
+          lang={lang}
+          customScripts={customScripts}
+          onSaveScript={saveScript}
+          onDeleteScript={deleteScript}
+          onStart={startGame}
+        />
       ) : (
         <div className="game-layout">
           <div className="game-main">
             <div className="game-toolbar">
-              <span className="script-label">{SCRIPTS[game.script]}</span>
+              <span className="script-label">{scriptDisplayName(game.script)}</span>
               <form
                 className="add-player-form"
                 onSubmit={(e) => {
@@ -159,7 +169,7 @@ function App() {
           {selectedPlayer && (
             <PlayerPanel
               player={selectedPlayer}
-              script={game.script}
+              roles={activeRoles}
               lang={lang}
               onClose={() => setSelectedId(null)}
               onRename={(name) => renamePlayer(selectedPlayer.id, name)}

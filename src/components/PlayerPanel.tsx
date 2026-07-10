@@ -1,11 +1,12 @@
 import { useState } from "react";
-import type { Lang, Player, ScriptId } from "../types";
-import { rolesForScript, TEAM_ORDER } from "../data/roles";
+import type { Lang, Player } from "../types";
+import type { DisplayRole } from "../data/scriptRoles";
+import { TEAM_ORDER } from "../data/roles";
 import { t, TEAM_LABEL } from "../i18n";
 
 interface Props {
   player: Player;
-  script: ScriptId;
+  roles: DisplayRole[];
   lang: Lang;
   onClose: () => void;
   onRename: (name: string) => void;
@@ -19,7 +20,7 @@ interface Props {
 
 export function PlayerPanel({
   player,
-  script,
+  roles,
   lang,
   onClose,
   onRename,
@@ -32,7 +33,6 @@ export function PlayerPanel({
 }: Props) {
   const [name, setName] = useState(player.name);
   const [reminderInput, setReminderInput] = useState("");
-  const roles = rolesForScript(script);
 
   const submitReminder = () => {
     const trimmed = reminderInput.trim();
@@ -79,9 +79,7 @@ export function PlayerPanel({
       </label>
 
       {player.roleId && (
-        <p className="role-ability">
-          {roles.find((r) => r.id === player.roleId)?.ability[lang]}
-        </p>
+        <p className="role-ability">{roles.find((r) => r.id === player.roleId)?.ability}</p>
       )}
 
       <div className="status-toggles">

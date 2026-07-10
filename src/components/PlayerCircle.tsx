@@ -1,4 +1,5 @@
-import type { Lang, Player, Role } from "../types";
+import type { Lang, Player } from "../types";
+import type { DisplayRole } from "../data/scriptRoles";
 import { PlayerToken } from "./PlayerToken";
 import { GapMarker } from "./GapMarker";
 
@@ -8,7 +9,7 @@ interface Props {
   selectedId: string | null;
   swapMode: boolean;
   swapFirstId: string | null;
-  roleById: (roleId: string | null) => Role | undefined;
+  roleById: (roleId: string | null) => DisplayRole | undefined;
   onSelect: (id: string) => void;
   onToggleDead: (id: string) => void;
   onToggleDrunk: (id: string) => void;

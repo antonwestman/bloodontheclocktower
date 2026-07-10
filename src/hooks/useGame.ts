@@ -1,8 +1,33 @@
 import { useCallback } from "react";
 import { useLocalStorageState } from "./useLocalStorageState";
-import type { GameState, Player, ScriptId } from "../types";
+import type { BuiltinScriptId, CustomRole, GameState, Player, ScriptRef } from "../types";
 
 const GAME_KEY = "botc-game";
+
+// Older saved games stored `script` as a plain "tb" | "bmr" | "sv" string,
+// before custom scenarios existed. Upgrade that shape on load instead of
+// crashing on it; drop anything else that doesn't look like a real game.
+function migrateGameState(parsed: unknown): GameState | null {
+  if (parsed === null || typeof parsed !== "object") return null;
+  const raw = parsed as Record<string, unknown>;
+  if (!raw.script || !Array.isArray(raw.players) || typeof raw.createdAt !== "number") return null;
+
+  let script: ScriptRef;
+  if (typeof raw.script === "string") {
+    script = { kind: "builtin", id: raw.script as BuiltinScriptId };
+  } else {
+    const s = raw.script as Record<string, unknown>;
+    if (s.kind === "builtin" && typeof s.id === "string") {
+      script = { kind: "builtin", id: s.id as BuiltinScriptId };
+    } else if (s.kind === "custom" && typeof s.id === "string" && typeof s.name === "string" && Array.isArray(s.roles)) {
+      script = { kind: "custom", id: s.id, name: s.name, roles: s.roles as CustomRole[] };
+    } else {
+      return null;
+    }
+  }
+
+  return { script, players: raw.players as Player[], createdAt: raw.createdAt };
+}
 
 function makeId(): string {
   return crypto.randomUUID();
@@ -24,10 +49,10 @@ function mapPlayer(players: Player[], id: string, fn: (p: Player) => Player): Pl
 }
 
 export function useGame() {
-  const [game, setGame] = useLocalStorageState<GameState | null>(GAME_KEY, null);
+  const [game, setGame] = useLocalStorageState<GameState | null>(GAME_KEY, null, migrateGameState);
 
   const startGame = useCallback(
-    (script: ScriptId, playerNames: string[]) => {
+    (script: ScriptRef, playerNames: string[]) => {
       setGame({
         script,
         players: playerNames.map(makePlayer),

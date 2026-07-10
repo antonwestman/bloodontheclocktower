@@ -213,13 +213,19 @@ button {
 }
 
 input[type="text"],
-select {
+select,
+textarea {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   color: var(--text);
   border-radius: 6px;
   padding: 0.55rem 0.7rem;
   font-size: 0.95rem;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
 }
 
 .add-player-form button {
@@ -258,6 +264,180 @@ select {
 
 .hint.centered {
   text-align: center;
+}
+
+.link-button {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  flex: 1;
+}
+
+.link-button:hover {
+  color: var(--accent-strong);
+}
+
+/* Script builder (custom scenarios) */
+
+.script-builder {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.start-from-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.start-from-choices button {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.start-from-choices button:hover {
+  border-color: var(--accent);
+}
+
+.roster-list {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.roster-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--team-townsfolk);
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+}
+
+.roster-row.team-outsider {
+  border-left-color: var(--team-outsider);
+}
+
+.roster-row.team-minion {
+  border-left-color: var(--team-minion);
+}
+
+.roster-row.team-demon {
+  border-left-color: var(--team-demon);
+}
+
+.roster-row-info {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.roster-row-team {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.roster-row-name {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roster-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.roster-row-actions button:not(.icon-button) {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+}
+
+.roster-row-actions button:not(.icon-button):hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.character-picker {
+  margin-top: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  padding: 0.9rem;
+}
+
+.picker-tabs {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+.picker-tabs button {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-dim);
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.picker-tabs button.active {
+  background: var(--bg-panel);
+  color: var(--accent-strong);
+  border-color: var(--accent);
+}
+
+.picker-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.picker-body select,
+.picker-body input,
+.picker-body textarea {
+  width: 100%;
+}
+
+.picker-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 /* Game layout */

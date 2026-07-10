@@ -1,18 +1,25 @@
 import { useState } from "react";
-import type { Lang, ScriptId } from "../types";
+import type { BuiltinScriptId, CustomRole, CustomScript, Lang, ScriptRef } from "../types";
 import { SCRIPTS } from "../data/roles";
 import { t } from "../i18n";
+import { ScriptBuilder } from "./ScriptBuilder";
 
 interface Props {
   lang: Lang;
-  onStart: (script: ScriptId, playerNames: string[]) => void;
+  customScripts: CustomScript[];
+  onSaveScript: (id: string | null, name: string, roles: CustomRole[]) => string;
+  onDeleteScript: (id: string) => void;
+  onStart: (script: ScriptRef, playerNames: string[]) => void;
 }
 
-const SCRIPT_IDS = Object.keys(SCRIPTS) as ScriptId[];
+type ScriptChoice = BuiltinScriptId | "custom";
+
+const BUILTIN_IDS = Object.keys(SCRIPTS) as BuiltinScriptId[];
 const MIN_PLAYERS = 5;
 
-export function SetupScreen({ lang, onStart }: Props) {
-  const [script, setScript] = useState<ScriptId>("tb");
+export function SetupScreen({ lang, customScripts, onSaveScript, onDeleteScript, onStart }: Props) {
+  const [choice, setChoice] = useState<ScriptChoice>("tb");
+  const [customDraft, setCustomDraft] = useState<{ name: string; roles: CustomRole[] }>({ name: "", roles: [] });
   const [names, setNames] = useState<string[]>([]);
   const [nameInput, setNameInput] = useState("");
 
@@ -29,6 +36,14 @@ export function SetupScreen({ lang, onStart }: Props) {
 
   const canStart = names.length >= MIN_PLAYERS;
 
+  const handleStart = () => {
+    const script: ScriptRef =
+      choice === "custom"
+        ? { kind: "custom", id: crypto.randomUUID(), name: customDraft.name || t(lang, "customScenario"), roles: customDraft.roles }
+        : { kind: "builtin", id: choice };
+    onStart(script, names);
+  };
+
   return (
     <div className="setup-screen">
       <h1>{t(lang, "appTitle")}</h1>
@@ -36,19 +51,33 @@ export function SetupScreen({ lang, onStart }: Props) {
       <section className="setup-section">
         <h2>{t(lang, "chooseScript")}</h2>
         <div className="script-choices">
-          {SCRIPT_IDS.map((id) => (
-            <label key={id} className={`script-choice ${script === id ? "selected" : ""}`}>
-              <input
-                type="radio"
-                name="script"
-                value={id}
-                checked={script === id}
-                onChange={() => setScript(id)}
-              />
+          {BUILTIN_IDS.map((id) => (
+            <label key={id} className={`script-choice ${choice === id ? "selected" : ""}`}>
+              <input type="radio" name="script" value={id} checked={choice === id} onChange={() => setChoice(id)} />
               {SCRIPTS[id]}
             </label>
           ))}
+          <label className={`script-choice ${choice === "custom" ? "selected" : ""}`}>
+            <input
+              type="radio"
+              name="script"
+              value="custom"
+              checked={choice === "custom"}
+              onChange={() => setChoice("custom")}
+            />
+            {t(lang, "customScenario")}
+          </label>
         </div>
+
+        {choice === "custom" && (
+          <ScriptBuilder
+            lang={lang}
+            customScripts={customScripts}
+            onSaveScript={onSaveScript}
+            onDeleteScript={onDeleteScript}
+            onDraftChange={setCustomDraft}
+          />
+        )}
       </section>
 
       <section className="setup-section">
@@ -89,12 +118,7 @@ export function SetupScreen({ lang, onStart }: Props) {
         {!canStart && <p className="hint">{t(lang, "needAtLeastPlayers")}</p>}
       </section>
 
-      <button
-        type="button"
-        className="primary-button"
-        disabled={!canStart}
-        onClick={() => onStart(script, names)}
-      >
+      <button type="button" className="primary-button" disabled={!canStart} onClick={handleStart}>
         {t(lang, "startGame")}
       </button>
     </div>

@@ -1,9 +1,10 @@
-import type { Lang, Player, Role } from "../types";
+import type { Lang, Player } from "../types";
+import type { DisplayRole } from "../data/scriptRoles";
 import { t } from "../i18n";
 
 interface Props {
   player: Player;
-  role: Role | undefined;
+  role: DisplayRole | undefined;
   lang: Lang;
   angle: number;
   radius: number;
