@@ -13,6 +13,7 @@ import { ImportGroupModal } from "./components/ImportGroupModal";
 import { RoleDistributionStatus } from "./components/RoleDistributionStatus";
 import { gameRoles, scriptDisplayName } from "./data/scriptRoles";
 import { assignedDistribution, requiredDistribution } from "./data/distribution";
+import { randomizeRoleSelection } from "./data/randomize";
 import { clearSharedScenarioParam, decodeScenario, readSharedScenarioParam } from "./lib/shareScenario";
 import { clearSharedGroupParam, decodeGroup, readSharedGroupParam } from "./lib/shareGroup";
 import type { CustomRole, ScriptRef } from "./types";
@@ -27,6 +28,7 @@ function App() {
     addPlayer,
     removePlayer,
     setRole,
+    assignRoles,
     setSecondaryRole,
     toggleDead,
     toggleDrunk,
@@ -150,6 +152,18 @@ function App() {
     setSwapFirstId(null);
   };
 
+  const handleRandomize = () => {
+    if (!game) return;
+    const alreadyAssigned = game.players.some((p) => p.roleId !== null);
+    if (alreadyAssigned && !window.confirm(t(lang, "randomizeRolesConfirm"))) return;
+    const roleIds = randomizeRoleSelection(activeRoles, game.players.length);
+    const assignments: Record<string, string | null> = {};
+    game.players.forEach((player, i) => {
+      assignments[player.id] = roleIds[i] ?? null;
+    });
+    assignRoles(assignments);
+  };
+
   let circleHint = t(lang, "clickPlayerHint");
   if (swapMode) {
     circleHint = t(lang, swapFirstId ? "swapHintPickSecond" : "swapHintPickFirst");
@@ -196,6 +210,16 @@ function App() {
               onClick={toggleSwapMode}
             >
               {t(lang, swapMode ? "swapCancel" : "swapSeats")}
+            </button>
+          )}
+          {game && (
+            <button
+              type="button"
+              className="secondary-button"
+              disabled={activeRoles.length === 0}
+              onClick={handleRandomize}
+            >
+              {t(lang, "randomizeRoles")}
             </button>
           )}
           {game && (

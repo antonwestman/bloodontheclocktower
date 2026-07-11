@@ -55,6 +55,13 @@ function mapPlayer(players: Player[], id: string, fn: (p: Player) => Player): Pl
   return players.map((p) => (p.id === id ? fn(p) : p));
 }
 
+// Sets a player's role and resets their secondary picks to match the new
+// role's slots (e.g. clearing a Drunk's believed Townsfolk when reassigned).
+function withRole(player: Player, roleId: string | null): Player {
+  const slotCount = secondaryRoleSlotsFor(roleId).reduce((sum, slot) => sum + slot.count, 0);
+  return { ...player, roleId, secondaryIds: new Array(slotCount).fill(null) };
+}
+
 export function useGame() {
   const [game, setGame] = useLocalStorageState<GameState | null>(GAME_KEY, null, migrateGameState);
 
@@ -96,10 +103,23 @@ export function useGame() {
 
   const setRole = useCallback(
     (id: string, roleId: string | null) => {
-      const slotCount = secondaryRoleSlotsFor(roleId).reduce((sum, slot) => sum + slot.count, 0);
-      updatePlayer(id, { roleId, secondaryIds: new Array(slotCount).fill(null) });
+      setGame((prev) => (prev ? { ...prev, players: mapPlayer(prev.players, id, (p) => withRole(p, roleId)) } : prev));
     },
-    [updatePlayer],
+    [setGame],
+  );
+
+  // Assigns roles to multiple players at once (e.g. randomizing the whole
+  // cast) in a single update, resetting secondary picks per player exactly
+  // like setRole does.
+  const assignRoles = useCallback(
+    (assignments: Record<string, string | null>) => {
+      setGame((prev) => {
+        if (!prev) return prev;
+        const players = prev.players.map((p) => (p.id in assignments ? withRole(p, assignments[p.id]) : p));
+        return { ...prev, players };
+      });
+    },
+    [setGame],
   );
 
   const setSecondaryRole = useCallback(
@@ -198,6 +218,7 @@ export function useGame() {
     addPlayer,
     removePlayer,
     setRole,
+    assignRoles,
     setSecondaryRole,
     toggleDead,
     toggleDrunk,
