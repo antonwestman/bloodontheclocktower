@@ -3,7 +3,7 @@ import type { BuiltinScriptId, CustomRole, CustomScript, Lang } from "../types";
 import { rolesForScript, SCRIPTS, TEAM_ORDER } from "../data/roles";
 import { t, TEAM_LABEL } from "../i18n";
 import { CharacterPicker } from "./CharacterPicker";
-import { buildShareUrl, encodeScenario, isShareSupported } from "../lib/shareScenario";
+import { buildScenarioShareUrl, encodeScenario, isShareSupported } from "../lib/shareScenario";
 
 interface Props {
   lang: Lang;
@@ -79,7 +79,7 @@ export function ScriptBuilder({ lang, customScripts, onSaveScript, onDeleteScrip
 
   const handleShare = async () => {
     const encoded = await encodeScenario({ name: name.trim() || t(lang, "customScenario"), roles });
-    const url = buildShareUrl(encoded);
+    const url = buildScenarioShareUrl(encoded);
     setShareUrl(url);
     setShareCopyFailed(false);
     try {

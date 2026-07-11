@@ -2,16 +2,20 @@ import { useEffect, useState } from "react";
 import { useGame } from "./hooks/useGame";
 import { useLang } from "./hooks/useLang";
 import { useCustomScripts } from "./hooks/useCustomScripts";
+import { usePlayerGroups } from "./hooks/usePlayerGroups";
+import { useKnownPlayers } from "./hooks/useKnownPlayers";
 import { SetupScreen } from "./components/SetupScreen";
 import { PlayerCircle } from "./components/PlayerCircle";
 import { PlayerPanel } from "./components/PlayerPanel";
 import { ImportScenarioModal } from "./components/ImportScenarioModal";
 import type { ImportStatus } from "./components/ImportScenarioModal";
+import { ImportGroupModal } from "./components/ImportGroupModal";
 import { RoleDistributionStatus } from "./components/RoleDistributionStatus";
 import { gameRoles, scriptDisplayName } from "./data/scriptRoles";
 import { assignedDistribution, requiredDistribution } from "./data/distribution";
 import { clearSharedScenarioParam, decodeScenario, readSharedScenarioParam } from "./lib/shareScenario";
-import type { CustomRole } from "./types";
+import { clearSharedGroupParam, decodeGroup, readSharedGroupParam } from "./lib/shareGroup";
+import type { CustomRole, ScriptRef } from "./types";
 import { t } from "./i18n";
 
 function App() {
@@ -33,6 +37,8 @@ function App() {
     movePlayerToGap,
   } = useGame();
   const { customScripts, saveScript, deleteScript } = useCustomScripts();
+  const { playerGroups, saveGroup, deleteGroup } = usePlayerGroups();
+  const { knownPlayers, addKnownPlayers } = useKnownPlayers();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newPlayerName, setNewPlayerName] = useState("");
@@ -43,14 +49,28 @@ function App() {
     name?: string;
     roles?: CustomRole[];
   } | null>(null);
+  const [importGroup, setImportGroup] = useState<{
+    status: ImportStatus;
+    name?: string;
+    playerNames?: string[];
+  } | null>(null);
 
   useEffect(() => {
-    const param = readSharedScenarioParam();
-    if (!param) return;
-    setImportScenario({ status: "loading" });
-    decodeScenario(param).then((result) => {
-      setImportScenario(result ? { status: "ready", name: result.name, roles: result.roles } : { status: "invalid" });
-    });
+    const scenarioParam = readSharedScenarioParam();
+    if (scenarioParam) {
+      setImportScenario({ status: "loading" });
+      decodeScenario(scenarioParam).then((result) => {
+        setImportScenario(result ? { status: "ready", name: result.name, roles: result.roles } : { status: "invalid" });
+      });
+    }
+
+    const groupParam = readSharedGroupParam();
+    if (groupParam) {
+      setImportGroup({ status: "loading" });
+      decodeGroup(groupParam).then((result) => {
+        setImportGroup(result ? { status: "ready", name: result.name, playerNames: result.playerNames } : { status: "invalid" });
+      });
+    }
   }, []);
 
   const handleImportConfirm = () => {
@@ -63,6 +83,24 @@ function App() {
   const handleImportCancel = () => {
     clearSharedScenarioParam();
     setImportScenario(null);
+  };
+
+  const handleImportGroupConfirm = () => {
+    if (importGroup?.status !== "ready" || !importGroup.name || !importGroup.playerNames) return;
+    saveGroup(null, importGroup.name, importGroup.playerNames);
+    addKnownPlayers(importGroup.playerNames);
+    clearSharedGroupParam();
+    setImportGroup(null);
+  };
+
+  const handleImportGroupCancel = () => {
+    clearSharedGroupParam();
+    setImportGroup(null);
+  };
+
+  const handleStartGame = (script: ScriptRef, playerNames: string[]) => {
+    addKnownPlayers(playerNames);
+    startGame(script, playerNames);
   };
 
   const selectedPlayer = game?.players.find((p) => p.id === selectedId) ?? null;
@@ -129,6 +167,16 @@ function App() {
           onCancel={handleImportCancel}
         />
       )}
+      {importGroup && (
+        <ImportGroupModal
+          lang={lang}
+          status={importGroup.status}
+          name={importGroup.name}
+          playerNames={importGroup.playerNames}
+          onConfirm={handleImportGroupConfirm}
+          onCancel={handleImportGroupCancel}
+        />
+      )}
       <header className="app-header">
         <h1>{t(lang, "appTitle")}</h1>
         <div className="header-controls">
@@ -164,7 +212,11 @@ function App() {
           customScripts={customScripts}
           onSaveScript={saveScript}
           onDeleteScript={deleteScript}
-          onStart={startGame}
+          playerGroups={playerGroups}
+          onSaveGroup={saveGroup}
+          onDeleteGroup={deleteGroup}
+          knownPlayers={knownPlayers}
+          onStart={handleStartGame}
         />
       ) : (
         <div className="game-layout">
@@ -178,6 +230,7 @@ function App() {
                   const trimmed = newPlayerName.trim();
                   if (!trimmed) return;
                   addPlayer(trimmed);
+                  addKnownPlayers([trimmed]);
                   setNewPlayerName("");
                 }}
               >

@@ -1,14 +1,19 @@
 import { useState } from "react";
-import type { BuiltinScriptId, CustomRole, CustomScript, Lang, ScriptRef } from "../types";
+import type { BuiltinScriptId, CustomRole, CustomScript, Lang, PlayerGroup, ScriptRef } from "../types";
 import { SCRIPTS } from "../data/roles";
 import { t } from "../i18n";
 import { ScriptBuilder } from "./ScriptBuilder";
+import { PlayerGroupPicker } from "./PlayerGroupPicker";
 
 interface Props {
   lang: Lang;
   customScripts: CustomScript[];
   onSaveScript: (id: string | null, name: string, roles: CustomRole[]) => string;
   onDeleteScript: (id: string) => void;
+  playerGroups: PlayerGroup[];
+  onSaveGroup: (id: string | null, name: string, playerNames: string[]) => string;
+  onDeleteGroup: (id: string) => void;
+  knownPlayers: string[];
   onStart: (script: ScriptRef, playerNames: string[]) => void;
 }
 
@@ -18,8 +23,19 @@ const BUILTIN_IDS = Object.keys(SCRIPTS) as BuiltinScriptId[];
 const MIN_PLAYERS = 5;
 const MAX_PLAYERS = 15;
 const PLAYER_COUNTS = Array.from({ length: MAX_PLAYERS - MIN_PLAYERS + 1 }, (_, i) => MIN_PLAYERS + i);
+const KNOWN_PLAYERS_LIST_ID = "known-players-list";
 
-export function SetupScreen({ lang, customScripts, onSaveScript, onDeleteScript, onStart }: Props) {
+export function SetupScreen({
+  lang,
+  customScripts,
+  onSaveScript,
+  onDeleteScript,
+  playerGroups,
+  onSaveGroup,
+  onDeleteGroup,
+  knownPlayers,
+  onStart,
+}: Props) {
   const [choice, setChoice] = useState<ScriptChoice>("tb");
   const [customDraft, setCustomDraft] = useState<{ name: string; roles: CustomRole[] }>({ name: "", roles: [] });
   const [names, setNames] = useState<string[]>(new Array(MIN_PLAYERS).fill(""));
@@ -53,6 +69,12 @@ export function SetupScreen({ lang, customScripts, onSaveScript, onDeleteScript,
   return (
     <div className="setup-screen">
       <h1>{t(lang, "appTitle")}</h1>
+
+      <datalist id={KNOWN_PLAYERS_LIST_ID}>
+        {knownPlayers.map((name) => (
+          <option key={name} value={name} />
+        ))}
+      </datalist>
 
       <section className="setup-section">
         <h2>{t(lang, "chooseScript")}</h2>
@@ -103,6 +125,18 @@ export function SetupScreen({ lang, customScripts, onSaveScript, onDeleteScript,
       </section>
 
       <section className="setup-section">
+        <h2>{t(lang, "playerGroups")}</h2>
+        <PlayerGroupPicker
+          lang={lang}
+          names={names}
+          playerGroups={playerGroups}
+          onSaveGroup={onSaveGroup}
+          onDeleteGroup={onDeleteGroup}
+          onLoadGroup={setNames}
+        />
+      </section>
+
+      <section className="setup-section">
         <h2>{t(lang, "players")}</h2>
         <ul className="player-list">
           {names.map((name, i) => (
@@ -113,6 +147,7 @@ export function SetupScreen({ lang, customScripts, onSaveScript, onDeleteScript,
                 value={name}
                 onChange={(e) => updateName(i, e.target.value)}
                 placeholder={`${t(lang, "playerSlotPlaceholder")} ${i + 1}`}
+                list={KNOWN_PLAYERS_LIST_ID}
                 autoFocus={i === 0}
               />
               <button

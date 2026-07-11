@@ -63,6 +63,15 @@ export type ScriptRef =
   | { kind: "builtin"; id: BuiltinScriptId }
   | { kind: "custom"; id: string; name: string; roles: CustomRole[] };
 
+// A saved, reusable set of people who often play together.
+export interface PlayerGroup {
+  id: string;
+  name: string;
+  playerNames: string[];
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface Player {
   id: string;
   name: string;
