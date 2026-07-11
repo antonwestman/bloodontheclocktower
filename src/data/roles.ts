@@ -319,6 +319,280 @@ export const ROLES: Role[] = [
     sv: "Varje natt dödar du en spelare. Sanningsenliga förmågor ger falska svar och falska påståenden ger inga döda.",
     en: "Each night, choose a player: they die. Good abilities yield false information; if no execution occurs, evil wins.",
   }},
+
+  // ---------------------------------------------------------------------
+  // Experimental (no official home script) — source: BotC wiki "Experimental"
+  // category page, cross-referenced against botc.fyi. Excludes Travellers,
+  // Fabled and Loric. Only surfaced when the "include experimental roles"
+  // toggle is on when building a custom scenario.
+  // ---------------------------------------------------------------------
+  { id: "acrobat", name: "Acrobat", team: "townsfolk", script: "experimental", ability: {
+    sv: "Varje natt (utom den första) väljer du en spelare: om de är eller blir förgiftade/fulla i natt dör du.",
+    en: "Each night (except the first), choose a player: if they are or become drunk or poisoned tonight, you die.",
+  }},
+  { id: "alchemist", name: "Alchemist", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du har en Minion-förmåga, som berättaren visar dig i förväg.",
+    en: "You have a Minion ability, shown to you in advance by the Storyteller.",
+  }},
+  { id: "alsaahir", name: "Alsaahir", team: "townsfolk", script: "experimental", ability: {
+    sv: "En gång per dag kan du offentligt gissa vilka spelare som är Minions och Demon. Gissar du rätt vinner det goda laget direkt.",
+    en: "Once per day, you may publicly guess which players are the Minion(s) and Demon(s). If correct, good wins immediately.",
+  }},
+  { id: "amnesiac", name: "Amnesiac", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du känner inte till din egen förmåga. Varje dag kan du gissa privat vad den är – du får veta hur nära du var.",
+    en: "You don't know your own ability. Each day, privately guess what it is — you learn how accurate you were.",
+  }},
+  { id: "atheist", name: "Atheist", team: "townsfolk", script: "experimental", ability: {
+    sv: "Berättaren får bryta mot spelreglerna. Om berättaren avrättas vinner det goda laget, även om du är död. (Inga onda karaktärer är med i spelet.)",
+    en: "The Storyteller may break the game rules. If the Storyteller is executed, good wins, even if you're dead. (No evil characters are in play.)",
+  }},
+  { id: "balloonist", name: "Balloonist", team: "townsfolk", script: "experimental", ability: {
+    sv: "Varje natt får du veta en spelare med en annan karaktärstyp än föregående natt.",
+    en: "Each night, you learn a player of a different character type than the previous night.",
+  }},
+  { id: "banshee", name: "Banshee", team: "townsfolk", script: "experimental", ability: {
+    sv: "Om Demonen dödar dig får alla veta det. Därefter kan du nominera och rösta två gånger per omgång.",
+    en: "If the Demon kills you, all players learn this. From then on, you may nominate and vote twice per round.",
+  }},
+  { id: "bounty-hunter", name: "Bounty Hunter", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du får veta en ond spelare från start. Om den dör får du veta en annan ond spelare samma natt.",
+    en: "You start knowing one evil player. If they die, you learn another evil player that night.",
+  }},
+  { id: "cannibal", name: "Cannibal", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du får förmågan hos den senast avrättade spelaren. Var de onda blir du förgiftad tills en god spelare avrättas.",
+    en: "You gain the ability of the most recently executed player. If they were evil, you're poisoned until a good player is executed.",
+  }},
+  { id: "choirboy", name: "Choirboy", team: "townsfolk", script: "experimental", ability: {
+    sv: "Om Demonen dödar Kungen får du veta vem Demonen är.",
+    en: "If the Demon kills the King, you learn who the Demon is.",
+  }},
+  { id: "cult-leader", name: "Cult Leader", team: "townsfolk", script: "experimental", ability: {
+    sv: "Varje natt byter du lag till en levande grannes. Om alla goda spelare ansluter sig till din \"kult\" vinner ditt lag.",
+    en: "Each night, you become the alignment of a living neighbour. If all good players join your \"cult,\" your team wins.",
+  }},
+  { id: "engineer", name: "Engineer", team: "townsfolk", script: "experimental", ability: {
+    sv: "En gång per spel, på natten, väljer du vilka Minions eller vilken Demon som är med i spelet.",
+    en: "Once per game, at night, choose which Minions or which Demon is in play.",
+  }},
+  { id: "farmer", name: "Farmer", team: "townsfolk", script: "experimental", ability: {
+    sv: "Om du dör på natten blir en levande god spelare den nya Farmer.",
+    en: "If you die at night, a living good player becomes the new Farmer.",
+  }},
+  { id: "fisherman", name: "Fisherman", team: "townsfolk", script: "experimental", ability: {
+    sv: "En gång per spel, på dagen, kan du be berättaren om råd för att hjälpa ditt lag vinna.",
+    en: "Once per game, during the day, you may ask the Storyteller for advice to help your team win.",
+  }},
+  { id: "general", name: "General", team: "townsfolk", script: "experimental", ability: {
+    sv: "Varje natt får du veta vilket lag berättaren anser ligger bäst till: gott, ont, eller inget.",
+    en: "Each night, you learn which alignment the Storyteller believes is currently winning: good, evil, or neither.",
+  }},
+  { id: "high-priestess", name: "High Priestess", team: "townsfolk", script: "experimental", ability: {
+    sv: "Varje natt får du veta vilken spelare berättaren tycker att du bör prata mest med.",
+    en: "Each night, you learn which player the Storyteller thinks you should talk to most.",
+  }},
+  { id: "huntsman", name: "Huntsman", team: "townsfolk", script: "experimental", ability: {
+    sv: "En gång per spel, på natten, väljer du en levande spelare – är det Damsel blir hon en Townsfolk som inte är med i spelet.",
+    en: "Once per game, at night, choose a living player — if it's the Damsel, she becomes a not-in-play Townsfolk.",
+  }},
+  { id: "king", name: "King", team: "townsfolk", script: "experimental", ability: {
+    sv: "Om de döda är lika många eller fler än de levande får du veta en levande karaktär varje natt. Demonen vet att du är Kungen.",
+    en: "If the dead equal or outnumber the living, you learn one living character each night. The Demon knows you're the King.",
+  }},
+  { id: "knight", name: "Knight", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du får veta två spelare som inte är Demonen från start.",
+    en: "You start knowing two players who are not the Demon.",
+  }},
+  { id: "lycanthrope", name: "Lycanthrope", team: "townsfolk", script: "experimental", ability: {
+    sv: "Varje natt väljer du en levande spelare. Är de goda dör de och Demonen dödar inte den natten. En god spelare kan visas som ond.",
+    en: "Each night, choose a living player. If good, they die and the Demon doesn't kill that night. One good player may register as evil.",
+  }},
+  { id: "magician", name: "Magician", team: "townsfolk", script: "experimental", ability: {
+    sv: "Demonen tror att du är en Minion; Minions tror att du är Demonen.",
+    en: "The Demon thinks you're a Minion; Minions think you're the Demon.",
+  }},
+  { id: "nightwatchman", name: "Nightwatchman", team: "townsfolk", script: "experimental", ability: {
+    sv: "En gång per spel, på natten, väljer du en spelare som får veta att du är Nightwatchman.",
+    en: "Once per game, at night, choose a player who learns that you are the Nightwatchman.",
+  }},
+  { id: "noble", name: "Noble", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du får veta tre spelare från start, varav exakt en är ond.",
+    en: "You start knowing three players, exactly one of whom is evil.",
+  }},
+  { id: "pixie", name: "Pixie", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du får veta en Townsfolk-roll som är med i spelet från start. Blir du övertygad om att du är den rollen får du dess förmåga när den dör.",
+    en: "You start knowing one in-play Townsfolk. If you become convinced you are that character, you gain their ability when they die.",
+  }},
+  { id: "poppy-grower", name: "Poppy Grower", team: "townsfolk", script: "experimental", ability: {
+    sv: "Minions och Demonen känner inte till varandra. Om du dör får de veta vilka varandra är samma natt.",
+    en: "Minions and the Demon don't know each other. If you die, they learn who each other are that night.",
+  }},
+  { id: "preacher", name: "Preacher", team: "townsfolk", script: "experimental", ability: {
+    sv: "Varje natt väljer du en spelare – är det en Minion får de veta det och förlorar sin förmåga under dagen.",
+    en: "Each night, choose a player — if it's a Minion, they learn this and lose their ability for the day.",
+  }},
+  { id: "princess", name: "Princess", team: "townsfolk", script: "experimental", ability: {
+    sv: "Om du nominerar och avrättar en spelare din första dag dödar inte Demonen den natten.",
+    en: "If you nominate and execute a player on your first day, the Demon doesn't kill that night.",
+  }},
+  { id: "shugenja", name: "Shugenja", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du får veta från start om din närmaste onda spelare sitter medurs eller moturs. Är avståndet lika långt åt båda hållen är svaret godtyckligt.",
+    en: "You start knowing whether your closest evil player is clockwise or counter-clockwise. If equidistant, the answer is arbitrary.",
+  }},
+  { id: "steward", name: "Steward", team: "townsfolk", script: "experimental", ability: {
+    sv: "Du får veta en god spelare från start.",
+    en: "You start knowing one good player.",
+  }},
+  { id: "village-idiot", name: "Village Idiot", team: "townsfolk", script: "experimental", ability: {
+    sv: "Varje natt väljer du en spelare och får veta dess lag. (0–2 extra Village Idiots kan vara med i spelet; en av dem är full.)",
+    en: "Each night, choose a player and learn their alignment. (0–2 extra copies may be in play; one of them is drunk.)",
+  }},
+
+  { id: "damsel", name: "Damsel", team: "outsider", script: "experimental", ability: {
+    sv: "Alla Minions vet att en Damsel är med i spelet. Om en Minion offentligt gissar vem du är (en gång) förlorar ditt lag.",
+    en: "All Minions know a Damsel is in play. If a Minion publicly guesses who you are (once), your team loses.",
+  }},
+  { id: "golem", name: "Golem", team: "outsider", script: "experimental", ability: {
+    sv: "Du får bara nominera en gång per spel. Gör du det och den nominerade inte är Demonen dör de.",
+    en: "You may only nominate once per game. When you do, if the nominee isn't the Demon, they die.",
+  }},
+  { id: "hatter", name: "Hatter", team: "outsider", script: "experimental", ability: {
+    sv: "Om du dör (dag eller natt) kan Minion- och Demon-spelarna var för sig välja en ny ond karaktär att bli.",
+    en: "If you die (day or night), the Minion and Demon players may each choose a new evil character to become.",
+  }},
+  { id: "heretic", name: "Heretic", team: "outsider", script: "experimental", ability: {
+    sv: "Den som vinner förlorar, och den som förlorar vinner – även om du är död.",
+    en: "Whoever wins, loses, and whoever loses, wins — even if you're dead.",
+  }},
+  { id: "hermit", name: "Hermit", team: "outsider", script: "experimental", ability: {
+    sv: "Du har alla Outsider-förmågor samtidigt.",
+    en: "You have all Outsider abilities simultaneously.",
+  }},
+  { id: "ogre", name: "Ogre", team: "outsider", script: "experimental", ability: {
+    sv: "Din första natt väljer du en spelare (inte dig själv): du blir dennes lag, utan att veta vilket – även om du är full eller förgiftad.",
+    en: "On your first night, choose a player (not yourself): you become their alignment, without knowing which — even if drunk or poisoned.",
+  }},
+  { id: "plague-doctor", name: "Plague Doctor", team: "outsider", script: "experimental", ability: {
+    sv: "Om du dör får berättaren en Minion-förmåga att använda.",
+    en: "If you die, the Storyteller gains a Minion ability to use.",
+  }},
+  { id: "politician", name: "Politician", team: "outsider", script: "experimental", ability: {
+    sv: "Var du den spelare som var mest ansvarig för att ditt lag förlorade byter du lag och vinner istället – även om du är död.",
+    en: "If you were the player most responsible for your team losing, you switch alignment and win instead — even if dead.",
+  }},
+  { id: "puzzlemaster", name: "Puzzlemaster", team: "outsider", script: "experimental", ability: {
+    sv: "En spelare är full, även om du dör. Gissar du rätt (en gång) vem det är får du veta Demon-spelaren – gissar du fel får du falsk information.",
+    en: "One player is drunk, even if you die. If you correctly guess (once) who it is, you learn the Demon player — guess wrong and get false information.",
+  }},
+  { id: "snitch", name: "Snitch", team: "outsider", script: "experimental", ability: {
+    sv: "Varje Minion får tre bluffkaraktärer istället för det vanliga antalet.",
+    en: "Each Minion gets three bluff characters instead of the usual number.",
+  }},
+  { id: "zealot", name: "Zealot", team: "outsider", script: "experimental", ability: {
+    sv: "Om fem eller fler spelare lever måste du rösta vid varje nominering.",
+    en: "If five or more players are alive, you must vote at every nomination.",
+  }},
+
+  { id: "boffin", name: "Boffin", team: "minion", script: "experimental", ability: {
+    sv: "Demonen (även om full/förgiftad) har förmågan hos en god karaktär som inte är med i spelet. Ni vet båda vilken.",
+    en: "The Demon (even if drunk or poisoned) has the ability of a not-in-play good character. You both know which one.",
+  }},
+  { id: "boomdandy", name: "Boomdandy", team: "minion", script: "experimental", ability: {
+    sv: "Om du avrättas dör alla utom tre spelare. Efter en nedräkning dör den som flest spelare pekar på.",
+    en: "If you're executed, everyone but three players dies. After a countdown, whoever the most players are pointing at dies.",
+  }},
+  { id: "fearmonger", name: "Fearmonger", team: "minion", script: "experimental", ability: {
+    sv: "Varje natt väljer du en spelare. Nominerar och avrättar du dem förlorar deras lag. Alla får veta om du byter val.",
+    en: "Each night, choose a player. If you nominate and execute them, their team loses. Everyone knows if you change your choice.",
+  }},
+  { id: "goblin", name: "Goblin", team: "minion", script: "experimental", ability: {
+    sv: "Om du offentligt hävdar att du är Goblin när du nomineras, och avrättas den dagen, vinner ditt lag.",
+    en: "If you publicly claim to be the Goblin when nominated, and are executed that day, your team wins.",
+  }},
+  { id: "harpy", name: "Harpy", team: "minion", script: "experimental", ability: {
+    sv: "Varje natt väljer du två spelare: nästa dag tror den första att den andra är ond, annars kan en eller båda dö.",
+    en: "Each night, choose two players: the next day, the first believes the second is evil, or one or both may die.",
+  }},
+  { id: "marionette", name: "Marionette", team: "minion", script: "experimental", ability: {
+    sv: "Du tror att du är en god karaktär, men det är du inte. Demonen vet vem du är. (Du sitter bredvid Demonen.)",
+    en: "You think you're a good character, but you're not. The Demon knows who you are. (You sit next to the Demon.)",
+  }},
+  { id: "mezepheles", name: "Mezepheles", team: "minion", script: "experimental", ability: {
+    sv: "Du får veta ett hemligt ord från start. Den första goda spelare som säger det offentligt blir ond den natten.",
+    en: "You start knowing a secret word. The first good player to say it publicly becomes evil that night.",
+  }},
+  { id: "organ-grinder", name: "Organ Grinder", team: "minion", script: "experimental", ability: {
+    sv: "Alla spelare håller ögonen stängda under omröstning och rösträkningen hålls hemlig. Varje natt väljer du om du är full till skymningen.",
+    en: "All players keep their eyes closed during voting and the tally stays secret. Each night, you choose whether you're drunk until dusk.",
+  }},
+  { id: "psychopath", name: "Psychopath", team: "minion", script: "experimental", ability: {
+    sv: "Varje dag före nomineringar kan du offentligt välja en spelare som dör. Avrättas du själv dör du bara om du förlorar ett slumpspel.",
+    en: "Each day before nominations, you may publicly choose a player who dies. If executed yourself, you only die if you lose a game of chance.",
+  }},
+  { id: "summoner", name: "Summoner", team: "minion", script: "experimental", ability: {
+    sv: "Du får tre bluffkaraktärer. Natt tre väljer du en spelare som blir en ond Demon efter ditt val. (Ingen Demon finns med från start.)",
+    en: "You get three bluff characters. On the third night, choose a player who becomes an evil Demon of your choice. (No Demon exists at the start.)",
+  }},
+  { id: "vizier", name: "Vizier", team: "minion", script: "experimental", ability: {
+    sv: "Alla vet att du är Vizier. Du kan inte dö på dagen. Om goda röstade för avrättning kan du välja att avrätta omedelbart.",
+    en: "Everyone knows you're the Vizier. You can't die during the day. If good voted to execute, you may choose to execute immediately.",
+  }},
+  { id: "widow", name: "Widow", team: "minion", script: "experimental", ability: {
+    sv: "Din första natt ser du Grimoire och väljer en spelare att förgifta. En god spelare får veta att en Widow är med i spelet.",
+    en: "On your first night, you see the Grimoire and choose a player to poison. One good player learns a Widow is in play.",
+  }},
+  { id: "wizard", name: "Wizard", team: "minion", script: "experimental", ability: {
+    sv: "En gång per spel kan du önska dig något. Beviljas önskningen kan den komma med ett pris och en ledtråd om dess natur.",
+    en: "Once per game, you may make a wish. If granted, it may come with a price and a clue to its nature.",
+  }},
+  { id: "wraith", name: "Wraith", team: "minion", script: "experimental", ability: {
+    sv: "Du kan välja att hålla ögonen öppna på natten. Du vaknar när andra onda spelare gör det.",
+    en: "You may choose to keep your eyes open at night. You wake when other evil players do.",
+  }},
+  { id: "xaan", name: "Xaan", team: "minion", script: "experimental", ability: {
+    sv: "Natt X är alla Townsfolk förgiftade till skymningen. (X = antal Outsiders i spelet.)",
+    en: "On night X, all Townsfolk are poisoned until dusk. (X = number of Outsiders in play.)",
+  }},
+
+  { id: "al-hadikhia", name: "Al-Hadikhia", team: "demon", script: "experimental", ability: {
+    sv: "Varje natt (utom den första) kan du välja tre spelare (alla får veta vilka): var och en väljer tyst att leva eller dö – men väljer alla att leva dör alla tre.",
+    en: "Each night (except the first), you may choose three players (everyone learns who): each silently chooses to live or die — but if all choose to live, all three die.",
+  }},
+  { id: "kazali", name: "Kazali", team: "demon", script: "experimental", ability: {
+    sv: "Varje natt (utom den första) väljer du en spelare som dör. (Du bestämmer vilka spelare som blir vilka Minions; antalet Outsiders kan förändras.)",
+    en: "Each night (except the first), choose a player who dies. (You decide which players become which Minions; the number of Outsiders may change.)",
+  }},
+  { id: "legion", name: "Legion", team: "demon", script: "experimental", ability: {
+    sv: "Varje natt (utom den första) kan en spelare dö. Avrättningar misslyckas om bara onda röstade. Du visas även som Minion. (De flesta spelare är Legion.)",
+    en: "Each night (except the first), a player may die. Executions fail if only evil voted. You also register as a Minion. (Most players are Legion.)",
+  }},
+  { id: "leviathan", name: "Leviathan", team: "demon", script: "experimental", ability: {
+    sv: "Om mer än en god spelare avrättas vinner det onda laget. Alla vet att du är med i spelet. Efter dag 5 vinner det onda laget automatiskt.",
+    en: "If more than one good player is executed, evil wins. Everyone knows you're in play. After day 5, evil wins automatically.",
+  }},
+  { id: "lil-monsta", name: "Lil' Monsta", team: "demon", script: "experimental", ability: {
+    sv: "Varje natt väljer Minions vem som \"passar\" Lil' Monsta och agerar Demon. Varje natt (utom den första) kan en spelare dö. (+1 Minion.)",
+    en: "Each night, the Minions choose who \"babysits\" Lil' Monsta and acts as the Demon. Each night (except the first), a player may die. (+1 Minion.)",
+  }},
+  { id: "lleech", name: "Lleech", team: "demon", script: "experimental", ability: {
+    sv: "Varje natt (utom den första) väljer du en spelare som dör. Din första natt förgiftar du en spelare – du dör om och endast om de dör.",
+    en: "Each night (except the first), choose a player who dies. On your first night, you poison a player — you die if and only if they die.",
+  }},
+  { id: "lord-of-typhon", name: "Lord of Typhon", team: "demon", script: "experimental", ability: {
+    sv: "Varje natt (utom den första) väljer du en spelare som dör. (Onda karaktärer sitter i rad med dig i mitten; +1 Minion, antalet Outsiders kan förändras.)",
+    en: "Each night (except the first), choose a player who dies. (Evil characters sit in a row with you in the middle; +1 Minion, the Outsider count may change.)",
+  }},
+  { id: "ojo", name: "Ojo", team: "demon", script: "experimental", ability: {
+    sv: "Varje natt (utom den första) väljer du en karaktärstyp som dör. Är den inte med i spelet bestämmer berättaren vem som dör istället.",
+    en: "Each night (except the first), choose a character type who dies. If not in play, the Storyteller decides who dies instead.",
+  }},
+  { id: "riot", name: "Riot", team: "demon", script: "experimental", ability: {
+    sv: "Dag 3 blir alla Minions Riot, och nominerade dör men måste själva omedelbart nominera en levande spelare.",
+    en: "On day 3, all Minions become Riot, and nominees die but must immediately nominate a living player themselves.",
+  }},
+  { id: "yaggababble", name: "Yaggababble", team: "demon", script: "experimental", ability: {
+    sv: "Du får veta en hemlig fras från start. Varje gång du säger den offentligt på dagen kan en spelare dö.",
+    en: "You start knowing a secret phrase. For each time you say it publicly during the day, a player may die.",
+  }},
 ];
 
 export function rolesForScript(script: BuiltinScriptId): Role[] {
@@ -339,6 +613,10 @@ export function distributionModifierFor(roleId: string) {
 
 export function secondaryRoleSlotsFor(roleId: string | null) {
   return roleById(roleId)?.secondaryRoleSlots ?? [];
+}
+
+export function isExperimentalRole(role: Role): boolean {
+  return role.script === "experimental";
 }
 
 export const TEAM_ORDER: Role["team"][] = ["townsfolk", "outsider", "minion", "demon"];

@@ -1,26 +1,29 @@
 import { useState } from "react";
 import type { CustomRole, Lang, Team } from "../types";
-import { ROLES, SCRIPTS, TEAM_ORDER } from "../data/roles";
+import { isExperimentalRole, ROLES, SCRIPTS, TEAM_ORDER } from "../data/roles";
 import { t, TEAM_LABEL } from "../i18n";
 
 interface Props {
   lang: Lang;
   excludeIds: string[];
   submitLabel: string;
+  includeExperimental: boolean;
   onPick: (role: CustomRole) => void;
   onCancel: () => void;
 }
 
 type Tab = "catalog" | "create";
 
-export function CharacterPicker({ lang, excludeIds, submitLabel, onPick, onCancel }: Props) {
+export function CharacterPicker({ lang, excludeIds, submitLabel, includeExperimental, onPick, onCancel }: Props) {
   const [tab, setTab] = useState<Tab>("catalog");
   const [catalogId, setCatalogId] = useState("");
   const [name, setName] = useState("");
   const [team, setTeam] = useState<Team>("townsfolk");
   const [ability, setAbility] = useState("");
 
-  const available = ROLES.filter((r) => !excludeIds.includes(r.id));
+  const available = ROLES.filter(
+    (r) => !excludeIds.includes(r.id) && (includeExperimental || !isExperimentalRole(r)),
+  );
 
   const submitCatalog = () => {
     const role = available.find((r) => r.id === catalogId);
@@ -64,7 +67,7 @@ export function CharacterPicker({ lang, excludeIds, submitLabel, onPick, onCance
                       .filter((r) => r.team === teamId)
                       .map((r) => (
                         <option key={r.id} value={r.id}>
-                          {r.name} ({SCRIPTS[r.script]})
+                          {r.name} ({r.script === "experimental" ? t(lang, "experimental") : SCRIPTS[r.script]})
                         </option>
                       ))}
                   </optgroup>

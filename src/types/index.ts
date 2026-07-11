@@ -2,6 +2,11 @@ export type Team = "townsfolk" | "outsider" | "minion" | "demon";
 
 export type BuiltinScriptId = "tb" | "bmr" | "sv";
 
+// Roles tagged "experimental" don't belong to any of the three base scripts —
+// they're catalog entries only available when building a custom scenario
+// with the "include experimental roles" toggle on.
+export type RoleScriptTag = BuiltinScriptId | "experimental";
+
 export type Lang = "sv" | "en";
 
 export type LocalizedText = Record<Lang, string>;
@@ -26,7 +31,7 @@ export interface Role {
   id: string;
   name: string;
   team: Team;
-  script: BuiltinScriptId;
+  script: RoleScriptTag;
   ability: LocalizedText;
   distributionModifier?: DistributionModifier;
   secondaryRoleSlots?: SecondaryRoleSlot[];

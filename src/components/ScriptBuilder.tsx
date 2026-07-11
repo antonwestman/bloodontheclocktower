@@ -22,6 +22,7 @@ export function ScriptBuilder({ lang, customScripts, onSaveScript, onDeleteScrip
   const [roles, setRoles] = useState<CustomRole[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [picker, setPicker] = useState<PickerMode>(null);
+  const [includeExperimental, setIncludeExperimental] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [shareCopyFailed, setShareCopyFailed] = useState(false);
 
@@ -159,11 +160,22 @@ export function ScriptBuilder({ lang, customScripts, onSaveScript, onDeleteScrip
           </ul>
         )}
 
+        <label className="checkbox-field">
+          <input
+            type="checkbox"
+            checked={includeExperimental}
+            onChange={(e) => setIncludeExperimental(e.target.checked)}
+          />
+          <span>{t(lang, "includeExperimentalRoles")}</span>
+        </label>
+        <p className="hint">{t(lang, "includeExperimentalRolesHint")}</p>
+
         {picker ? (
           <CharacterPicker
             lang={lang}
             excludeIds={roles.map((r) => r.id)}
             submitLabel={t(lang, picker.mode === "replace" ? "replaceCharacter" : "addCharacter")}
+            includeExperimental={includeExperimental}
             onPick={(role) => (picker.mode === "replace" ? replaceRole(picker.index, role) : addRole(role))}
             onCancel={() => setPicker(null)}
           />
