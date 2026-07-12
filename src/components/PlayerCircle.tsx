@@ -17,7 +17,18 @@ interface Props {
   onGapSelect: (afterIndex: number) => void;
 }
 
-const RADIUS = 42;
+type DensityTier = "cozy" | "compact" | "tight";
+
+// Beyond ~8 players, tokens start crowding each other (especially on narrow
+// screens) — shrink them and push them further out toward the edge of the
+// circle as the roster grows, instead of a single fixed size for everyone.
+function densityTier(playerCount: number): DensityTier {
+  if (playerCount <= 8) return "cozy";
+  if (playerCount <= 12) return "compact";
+  return "tight";
+}
+
+const RADIUS_BY_TIER: Record<DensityTier, number> = { cozy: 42, compact: 44, tight: 46 };
 
 function seatAngle(index: number, total: number): number {
   return (2 * Math.PI * index) / total - Math.PI / 2;
@@ -36,9 +47,11 @@ export function PlayerCircle({
   onGapSelect,
 }: Props) {
   const n = players.length;
+  const tier = densityTier(n);
+  const radius = RADIUS_BY_TIER[tier];
 
   return (
-    <div className="circle-wrapper">
+    <div className={`circle-wrapper density-${tier}`}>
       <div className="circle-track" />
       {players.map((player, i) => (
         <PlayerToken
@@ -48,7 +61,7 @@ export function PlayerCircle({
           secondaryRoleNames={resolveSecondaryNames(player, players, roleById)}
           lang={lang}
           angle={seatAngle(i, n)}
-          radius={RADIUS}
+          radius={radius}
           isSelected={player.id === selectedId}
           swapMode={swapMode}
           isSwapChosen={player.id === swapFirstId}
@@ -62,7 +75,7 @@ export function PlayerCircle({
           <GapMarker
             key={`gap-${player.id}`}
             angle={seatAngle(i, n) + Math.PI / n}
-            radius={RADIUS}
+            radius={radius}
             lang={lang}
             onClick={() => onGapSelect(i)}
           />

@@ -634,6 +634,44 @@ textarea {
   text-align: center;
 }
 
+.circle-wrapper.density-compact .token-avatar {
+  width: 76px;
+  height: 76px;
+}
+
+.circle-wrapper.density-compact .player-token {
+  width: 96px;
+}
+
+.circle-wrapper.density-compact .token-name {
+  font-size: 0.72rem;
+}
+
+.circle-wrapper.density-compact .token-role {
+  font-size: 0.62rem;
+}
+
+.circle-wrapper.density-tight .token-avatar {
+  width: 66px;
+  height: 66px;
+}
+
+.circle-wrapper.density-tight .player-token {
+  width: 84px;
+}
+
+.circle-wrapper.density-tight .token-name {
+  font-size: 0.66rem;
+}
+
+.circle-wrapper.density-tight .token-role {
+  font-size: 0.58rem;
+}
+
+.circle-wrapper.density-tight .token-secondary-role {
+  font-size: 0.55rem;
+}
+
 .player-token.team-outsider .token-avatar {
   border-color: var(--team-outsider);
 }
@@ -920,5 +958,38 @@ textarea {
   .token-avatar {
     width: 72px;
     height: 72px;
+  }
+
+  .circle-wrapper.density-compact .token-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .circle-wrapper.density-compact .player-token {
+    width: 80px;
+  }
+
+  .circle-wrapper.density-tight .token-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .circle-wrapper.density-tight .player-token {
+    width: 68px;
+  }
+
+  .circle-wrapper.density-tight .token-name {
+    font-size: 0.6rem;
+  }
+
+  .circle-wrapper.density-tight .token-role {
+    font-size: 0.52rem;
+  }
+
+  /* At high player counts on small screens, the per-token quick toggles add
+     enough height to start colliding with neighbouring tokens. Dead/Drunk
+     stay reachable via the side panel (tap the token) instead. */
+  .circle-wrapper.density-tight .token-toggles {
+    display: none;
   }
 }
