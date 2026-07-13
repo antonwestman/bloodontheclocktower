@@ -661,6 +661,94 @@ textarea {
   width: 100%;
 }
 
+.reveal-checkmark {
+  color: var(--team-outsider);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* Character guide */
+
+.character-guide-modal {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.character-guide {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.character-guide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.character-guide-header h2 {
+  margin: 0;
+  color: var(--accent-strong);
+  font-size: 1.1rem;
+}
+
+.character-guide-group h3 {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.5rem;
+}
+
+.character-guide-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.character-guide-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--bg-elevated);
+  border-left: 3px solid var(--team-townsfolk);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+}
+
+.character-guide-row.team-outsider {
+  border-left-color: var(--team-outsider);
+}
+
+.character-guide-row.team-minion {
+  border-left-color: var(--team-minion);
+}
+
+.character-guide-row.team-demon {
+  border-left-color: var(--team-demon);
+}
+
+.character-guide-name {
+  font-weight: 700;
+}
+
+.character-guide-ability {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
 /* Game layout */
 
 .game-layout {

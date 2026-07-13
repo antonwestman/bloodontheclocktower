@@ -12,12 +12,17 @@ import type { ImportStatus } from "./components/ImportScenarioModal";
 import { ImportGroupModal } from "./components/ImportGroupModal";
 import { RoleDistributionStatus } from "./components/RoleDistributionStatus";
 import { NightGuide } from "./components/NightGuide";
+import { RoleRevealGuide } from "./components/RoleRevealGuide";
+import { CharacterGuide } from "./components/CharacterGuide";
 import { gameRoles, scriptDisplayName } from "./data/scriptRoles";
 import { assignedDistribution, requiredDistribution } from "./data/distribution";
 import { randomizeRoleSelection } from "./data/randomize";
+import { ROLES, rolesForScript, SCRIPTS } from "./data/roles";
 import { clearSharedScenarioParam, decodeScenario, readSharedScenarioParam } from "./lib/shareScenario";
 import { clearSharedGroupParam, decodeGroup, readSharedGroupParam } from "./lib/shareGroup";
-import type { CustomRole, ScriptRef } from "./types";
+import { buildRosterShareUrl, decodeRoster, encodeRoster, isShareSupported, readSharedRosterParam } from "./lib/shareRoster";
+import type { SharedRoster } from "./lib/shareRoster";
+import type { BuiltinScriptId, CustomRole, ScriptRef } from "./types";
 import { t } from "./i18n";
 
 function App() {
@@ -42,6 +47,7 @@ function App() {
     recordNightAction,
     setNightExecuted,
     completeNight,
+    markRoleRevealed,
   } = useGame();
   const { customScripts, saveScript, deleteScript } = useCustomScripts();
   const { playerGroups, saveGroup, deleteGroup } = usePlayerGroups();
@@ -52,6 +58,12 @@ function App() {
   const [swapMode, setSwapMode] = useState(false);
   const [swapFirstId, setSwapFirstId] = useState<string | null>(null);
   const [nightGuideOpen, setNightGuideOpen] = useState(false);
+  const [roleRevealOpen, setRoleRevealOpen] = useState(false);
+  const [characterGuideOpen, setCharacterGuideOpen] = useState(false);
+  const [guideScriptChoice, setGuideScriptChoice] = useState<BuiltinScriptId>("tb");
+  const [guideIncludeExperimental, setGuideIncludeExperimental] = useState(false);
+  const [rosterShareUrl, setRosterShareUrl] = useState<string | null>(null);
+  const [rosterShareCopyFailed, setRosterShareCopyFailed] = useState(false);
   const [importScenario, setImportScenario] = useState<{
     status: ImportStatus;
     name?: string;
@@ -62,6 +74,7 @@ function App() {
     name?: string;
     playerNames?: string[];
   } | null>(null);
+  const [sharedRoster, setSharedRoster] = useState<{ status: ImportStatus; roster?: SharedRoster } | null>(null);
 
   useEffect(() => {
     const scenarioParam = readSharedScenarioParam();
@@ -77,6 +90,14 @@ function App() {
       setImportGroup({ status: "loading" });
       decodeGroup(groupParam).then((result) => {
         setImportGroup(result ? { status: "ready", name: result.name, playerNames: result.playerNames } : { status: "invalid" });
+      });
+    }
+
+    const rosterParam = readSharedRosterParam();
+    if (rosterParam) {
+      setSharedRoster({ status: "loading" });
+      decodeRoster(rosterParam).then((result) => {
+        setSharedRoster(result ? { status: "ready", roster: result } : { status: "invalid" });
       });
     }
   }, []);
@@ -120,9 +141,28 @@ function App() {
   const activeNight = game?.nights.find((n) => !n.completed) ?? null;
   const nextNightNumber = (game?.nights.length ?? 0) + 1;
 
+  const standaloneGuideRoles = [
+    ...rolesForScript(guideScriptChoice),
+    ...(guideIncludeExperimental ? ROLES.filter((r) => r.script === "experimental") : []),
+  ].map((r) => ({ id: r.id, name: r.name, team: r.team, ability: r.ability[lang] }));
+  const guideRoles = game ? activeRoles : standaloneGuideRoles;
+  const guideTitle = game ? scriptDisplayName(game.script) : SCRIPTS[guideScriptChoice];
+
   const handleOpenNightGuide = () => {
     startNight();
     setNightGuideOpen(true);
+  };
+
+  const handleShareRoster = async () => {
+    const encoded = await encodeRoster({ name: guideTitle, roles: guideRoles });
+    const url = buildRosterShareUrl(encoded);
+    setRosterShareUrl(url);
+    setRosterShareCopyFailed(false);
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      setRosterShareCopyFailed(true);
+    }
   };
 
   const handleReset = () => {
@@ -182,6 +222,30 @@ function App() {
     circleHint = t(lang, swapFirstId ? "swapHintPickSecond" : "swapHintPickFirst");
   }
 
+  if (sharedRoster) {
+    return (
+      <div className="app">
+        <header className="app-header">
+          <h1>{t(lang, "appTitle")}</h1>
+          <fieldset className="lang-toggle">
+            <legend className="visually-hidden">{t(lang, "language")}</legend>
+            <button type="button" className={lang === "sv" ? "active" : ""} onClick={() => setLang("sv")}>
+              SV
+            </button>
+            <button type="button" className={lang === "en" ? "active" : ""} onClick={() => setLang("en")}>
+              EN
+            </button>
+          </fieldset>
+        </header>
+        {sharedRoster.status === "loading" && <p className="hint centered">{t(lang, "importGroupLoading")}</p>}
+        {sharedRoster.status === "invalid" && <p className="hint centered">{t(lang, "characterGuideInvalidLink")}</p>}
+        {sharedRoster.status === "ready" && sharedRoster.roster && (
+          <CharacterGuide lang={lang} title={sharedRoster.roster.name} roles={sharedRoster.roster.roles} />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       {importScenario && (
@@ -223,6 +287,70 @@ function App() {
           />
         </div>
       )}
+      {roleRevealOpen && game && (
+        <div className="modal-overlay">
+          <RoleRevealGuide
+            lang={lang}
+            players={game.players}
+            revealedPlayerIds={game.revealedPlayerIds}
+            roleById={roleById}
+            onMarkRevealed={markRoleRevealed}
+            onClose={() => setRoleRevealOpen(false)}
+          />
+        </div>
+      )}
+      {characterGuideOpen && (
+        <div className="modal-overlay">
+          <div className="character-guide-modal">
+            {!game && (
+              <div className="field">
+                <span>{t(lang, "chooseScript")}</span>
+                <div className="script-choices">
+                  {(Object.keys(SCRIPTS) as BuiltinScriptId[]).map((id) => (
+                    <label key={id} className={`script-choice ${guideScriptChoice === id ? "selected" : ""}`}>
+                      <input
+                        type="radio"
+                        name="guide-script"
+                        checked={guideScriptChoice === id}
+                        onChange={() => setGuideScriptChoice(id)}
+                      />
+                      {SCRIPTS[id]}
+                    </label>
+                  ))}
+                </div>
+                <label className="checkbox-field">
+                  <input
+                    type="checkbox"
+                    checked={guideIncludeExperimental}
+                    onChange={(e) => setGuideIncludeExperimental(e.target.checked)}
+                  />
+                  <span>{t(lang, "includeExperimentalRoles")}</span>
+                </label>
+              </div>
+            )}
+            <CharacterGuide lang={lang} title={guideTitle} roles={guideRoles} onClose={() => setCharacterGuideOpen(false)} />
+            {game && (
+              <div className="field">
+                <button
+                  type="button"
+                  className="secondary-button"
+                  disabled={!isShareSupported()}
+                  onClick={handleShareRoster}
+                >
+                  {t(lang, "shareRoster")}
+                </button>
+                {!isShareSupported() && <p className="hint">{t(lang, "shareUnsupported")}</p>}
+                {rosterShareUrl && (
+                  <>
+                    <input type="text" readOnly value={rosterShareUrl} onFocus={(e) => e.currentTarget.select()} />
+                    <p className="hint">{t(lang, rosterShareCopyFailed ? "shareLinkCopyFailed" : "shareLinkCopied")}</p>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <header className="app-header">
         <h1>{t(lang, "appTitle")}</h1>
         <div className="header-controls">
@@ -255,10 +383,18 @@ function App() {
             </button>
           )}
           {game && (
+            <button type="button" className="secondary-button" onClick={() => setRoleRevealOpen(true)}>
+              {t(lang, "revealRoles")}
+            </button>
+          )}
+          {game && (
             <button type="button" className="secondary-button" onClick={handleOpenNightGuide}>
               {t(lang, activeNight ? "nightResume" : "nightStart")} {activeNight?.number ?? nextNightNumber}
             </button>
           )}
+          <button type="button" className="secondary-button" onClick={() => setCharacterGuideOpen(true)}>
+            {t(lang, "characterGuide")}
+          </button>
           {game && (
             <button type="button" className="secondary-button" onClick={handleReset}>
               {t(lang, "resetGame")}

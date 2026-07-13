@@ -130,4 +130,8 @@ export interface GameState {
   players: Player[];
   createdAt: number;
   nights: NightRecord[];
+  // Player ids who've been shown "you are X" via the role-reveal guide.
+  // Purely a progress checklist for the Storyteller — re-visitable anytime,
+  // not a gate on the rest of the game.
+  revealedPlayerIds: string[];
 }

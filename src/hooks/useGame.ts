@@ -33,8 +33,9 @@ function migrateGameState(parsed: unknown): GameState | null {
   });
 
   const nights = Array.isArray(raw.nights) ? (raw.nights as NightRecord[]) : [];
+  const revealedPlayerIds = Array.isArray(raw.revealedPlayerIds) ? (raw.revealedPlayerIds as string[]) : [];
 
-  return { script, players, createdAt: raw.createdAt, nights };
+  return { script, players, createdAt: raw.createdAt, nights, revealedPlayerIds };
 }
 
 function makeId(): string {
@@ -74,6 +75,7 @@ export function useGame() {
         players: playerNames.map(makePlayer),
         createdAt: Date.now(),
         nights: [],
+        revealedPlayerIds: [],
       });
     },
     [setGame],
@@ -267,6 +269,16 @@ export function useGame() {
     [setGame],
   );
 
+  const markRoleRevealed = useCallback(
+    (playerId: string) => {
+      setGame((prev) => {
+        if (!prev || prev.revealedPlayerIds.includes(playerId)) return prev;
+        return { ...prev, revealedPlayerIds: [...prev.revealedPlayerIds, playerId] };
+      });
+    },
+    [setGame],
+  );
+
   return {
     game,
     startGame,
@@ -287,6 +299,7 @@ export function useGame() {
     recordNightAction,
     setNightExecuted,
     completeNight,
+    markRoleRevealed,
   };
 }
 
