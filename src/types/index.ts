@@ -27,6 +27,32 @@ export interface SecondaryRoleSlot {
   label: LocalizedText;
 }
 
+// Identifies which computation the Night Guide runs for a role's turn. Only
+// defined for the three base scripts' roles, where the mechanic is known
+// precisely enough to automate — experimental and custom-scenario roles
+// fall back to a plain ability-text reminder instead.
+export type NightResolverId =
+  | "minion-demon-info"
+  | "reveal-two-townsfolk"
+  | "reveal-two-outsider"
+  | "reveal-two-minion"
+  | "count-evil-pairs"
+  | "count-evil-neighbors"
+  | "fortune-teller"
+  | "choose-player"
+  | "choose-player-protect"
+  | "choose-player-kill"
+  | "undertaker"
+  | "choose-player-learn-role"
+  | "wake-no-action"
+  | "manual";
+
+export interface NightBehavior {
+  firstNight: boolean;
+  otherNights: boolean;
+  resolver: NightResolverId;
+}
+
 export interface Role {
   id: string;
   name: string;
@@ -35,6 +61,7 @@ export interface Role {
   ability: LocalizedText;
   distributionModifier?: DistributionModifier;
   secondaryRoleSlots?: SecondaryRoleSlot[];
+  nightBehavior?: NightBehavior;
 }
 
 // A role inside a custom scenario. Ability text is plain (not localized) —
@@ -85,8 +112,22 @@ export interface Player {
   secondaryIds: (string | null)[];
 }
 
+// One night's worth of recorded Storyteller actions. `actions` is keyed by
+// the *acting* player's id -> the player id(s) they targeted (poison,
+// protect, kill, choose, ...), so later steps (same night or future nights)
+// can look up what happened. `executedPlayerId` is entered manually the
+// first time it's needed (e.g. by the Undertaker) since day-phase actions
+// aren't tracked by the app yet.
+export interface NightRecord {
+  number: number;
+  actions: Record<string, string[]>;
+  executedPlayerId: string | null;
+  completed: boolean;
+}
+
 export interface GameState {
   script: ScriptRef;
   players: Player[];
   createdAt: number;
+  nights: NightRecord[];
 }

@@ -11,6 +11,7 @@ import { ImportScenarioModal } from "./components/ImportScenarioModal";
 import type { ImportStatus } from "./components/ImportScenarioModal";
 import { ImportGroupModal } from "./components/ImportGroupModal";
 import { RoleDistributionStatus } from "./components/RoleDistributionStatus";
+import { NightGuide } from "./components/NightGuide";
 import { gameRoles, scriptDisplayName } from "./data/scriptRoles";
 import { assignedDistribution, requiredDistribution } from "./data/distribution";
 import { randomizeRoleSelection } from "./data/randomize";
@@ -37,6 +38,10 @@ function App() {
     renamePlayer,
     swapSeats,
     movePlayerToGap,
+    startNight,
+    recordNightAction,
+    setNightExecuted,
+    completeNight,
   } = useGame();
   const { customScripts, saveScript, deleteScript } = useCustomScripts();
   const { playerGroups, saveGroup, deleteGroup } = usePlayerGroups();
@@ -46,6 +51,7 @@ function App() {
   const [newPlayerName, setNewPlayerName] = useState("");
   const [swapMode, setSwapMode] = useState(false);
   const [swapFirstId, setSwapFirstId] = useState<string | null>(null);
+  const [nightGuideOpen, setNightGuideOpen] = useState(false);
   const [importScenario, setImportScenario] = useState<{
     status: ImportStatus;
     name?: string;
@@ -111,6 +117,13 @@ function App() {
   const assignedRoleIds = game ? game.players.map((p) => p.roleId).filter((id): id is string => id !== null) : [];
   const required = game ? requiredDistribution(game.players.length, assignedRoleIds) : null;
   const assigned = game ? assignedDistribution(game.players, roleById) : null;
+  const activeNight = game?.nights.find((n) => !n.completed) ?? null;
+  const nextNightNumber = (game?.nights.length ?? 0) + 1;
+
+  const handleOpenNightGuide = () => {
+    startNight();
+    setNightGuideOpen(true);
+  };
 
   const handleReset = () => {
     if (window.confirm(t(lang, "resetConfirm"))) {
@@ -191,6 +204,25 @@ function App() {
           onCancel={handleImportGroupCancel}
         />
       )}
+      {nightGuideOpen && activeNight && game && (
+        <div className="modal-overlay">
+          <NightGuide
+            lang={lang}
+            night={activeNight}
+            players={game.players}
+            roles={activeRoles}
+            roleById={roleById}
+            onRecordAction={(actingId, targets) => recordNightAction(activeNight.number, actingId, targets)}
+            onSetExecuted={(playerId) => setNightExecuted(activeNight.number, playerId)}
+            onToggleDead={toggleDead}
+            onFinish={() => {
+              completeNight(activeNight.number);
+              setNightGuideOpen(false);
+            }}
+            onClose={() => setNightGuideOpen(false)}
+          />
+        </div>
+      )}
       <header className="app-header">
         <h1>{t(lang, "appTitle")}</h1>
         <div className="header-controls">
@@ -220,6 +252,11 @@ function App() {
               onClick={handleRandomize}
             >
               {t(lang, "randomizeRoles")}
+            </button>
+          )}
+          {game && (
+            <button type="button" className="secondary-button" onClick={handleOpenNightGuide}>
+              {t(lang, activeNight ? "nightResume" : "nightStart")} {activeNight?.number ?? nextNightNumber}
             </button>
           )}
           {game && (

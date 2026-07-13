@@ -491,6 +491,176 @@ textarea {
   font-size: 1.1rem;
 }
 
+/* Night Guide */
+
+.night-guide {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  max-width: 520px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.night-guide-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.night-guide-header h2 {
+  margin: 0;
+  color: var(--accent-strong);
+  font-size: 1.1rem;
+}
+
+.night-guide-counter {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.night-guide-missing {
+  padding: 0.5rem 0.7rem;
+  background: var(--bg-elevated);
+  border-radius: 6px;
+}
+
+.night-guide-step {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 8rem;
+}
+
+.night-guide-player {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.night-guide-player-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.night-guide-role-name {
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.night-guide-info-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.night-guide-info-lines li {
+  background: var(--bg-elevated);
+  border-radius: 6px;
+  padding: 0.6rem 0.7rem;
+  font-weight: 700;
+}
+
+.night-guide-choice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.night-guide-nav {
+  justify-content: flex-end;
+}
+
+.night-guide-note li {
+  border: 1px solid var(--accent);
+  color: var(--accent-strong);
+}
+
+.night-guide-override {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.night-guide-override span {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.night-guide-override textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+/* Player reveal view — full-screen, single-player, opaque (never lets
+   anything about the rest of the game show through). */
+
+.player-reveal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 300;
+}
+
+.player-reveal-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  max-width: 420px;
+  width: 100%;
+}
+
+.player-reveal-box .night-guide-player-name {
+  font-size: 1.6rem;
+}
+
+.player-reveal-box .night-guide-role-name {
+  font-size: 1.2rem;
+}
+
+.player-reveal-box .role-ability {
+  text-align: left;
+}
+
+.player-reveal-text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  padding: 1rem;
+  width: 100%;
+}
+
+.player-reveal-choice {
+  flex-direction: column;
+  width: 100%;
+}
+
+.player-reveal-choice select {
+  width: 100%;
+}
+
 /* Game layout */
 
 .game-layout {

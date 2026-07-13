@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useLocalStorageState } from "./useLocalStorageState";
-import type { BuiltinScriptId, CustomRole, GameState, Player, ScriptRef } from "../types";
+import type { BuiltinScriptId, CustomRole, GameState, NightRecord, Player, ScriptRef } from "../types";
 import { secondaryRoleSlotsFor } from "../data/roles";
 
 const GAME_KEY = "botc-game";
@@ -32,7 +32,9 @@ function migrateGameState(parsed: unknown): GameState | null {
     return { ...p, secondaryIds: legacy.secondaryIds ?? legacy.secondaryRoleIds ?? [] };
   });
 
-  return { script, players, createdAt: raw.createdAt };
+  const nights = Array.isArray(raw.nights) ? (raw.nights as NightRecord[]) : [];
+
+  return { script, players, createdAt: raw.createdAt, nights };
 }
 
 function makeId(): string {
@@ -71,6 +73,7 @@ export function useGame() {
         script,
         players: playerNames.map(makePlayer),
         createdAt: Date.now(),
+        nights: [],
       });
     },
     [setGame],
@@ -211,6 +214,59 @@ export function useGame() {
     [setGame],
   );
 
+  // Starts the next night (resuming one already in progress instead of
+  // creating a duplicate) and returns its number.
+  const startNight = useCallback(() => {
+    let nightNumber = 1;
+    setGame((prev) => {
+      if (!prev) return prev;
+      const inProgress = prev.nights.find((n) => !n.completed);
+      if (inProgress) {
+        nightNumber = inProgress.number;
+        return prev;
+      }
+      nightNumber = prev.nights.length + 1;
+      const record: NightRecord = { number: nightNumber, actions: {}, executedPlayerId: null, completed: false };
+      return { ...prev, nights: [...prev.nights, record] };
+    });
+    return nightNumber;
+  }, [setGame]);
+
+  const recordNightAction = useCallback(
+    (nightNumber: number, actingPlayerId: string, targetIds: string[]) => {
+      setGame((prev) => {
+        if (!prev) return prev;
+        const nights = prev.nights.map((n) =>
+          n.number === nightNumber ? { ...n, actions: { ...n.actions, [actingPlayerId]: targetIds } } : n,
+        );
+        return { ...prev, nights };
+      });
+    },
+    [setGame],
+  );
+
+  const setNightExecuted = useCallback(
+    (nightNumber: number, playerId: string | null) => {
+      setGame((prev) => {
+        if (!prev) return prev;
+        const nights = prev.nights.map((n) => (n.number === nightNumber ? { ...n, executedPlayerId: playerId } : n));
+        return { ...prev, nights };
+      });
+    },
+    [setGame],
+  );
+
+  const completeNight = useCallback(
+    (nightNumber: number) => {
+      setGame((prev) => {
+        if (!prev) return prev;
+        const nights = prev.nights.map((n) => (n.number === nightNumber ? { ...n, completed: true } : n));
+        return { ...prev, nights };
+      });
+    },
+    [setGame],
+  );
+
   return {
     game,
     startGame,
@@ -227,6 +283,10 @@ export function useGame() {
     renamePlayer,
     swapSeats,
     movePlayerToGap,
+    startNight,
+    recordNightAction,
+    setNightExecuted,
+    completeNight,
   };
 }
 
